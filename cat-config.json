@@ -1,7 +1,7 @@
 {
   "version": 2,
   "coCreator": {
-    "name": "You",
+    "name": "shen",
     "aliases": [],
     "mentionPatterns": ["@co-creator"]
   },
@@ -82,6 +82,41 @@
       "lead": true,
       "available": true,
       "evaluation": "开源多模型编码猫，自带 Oh My OpenCode 多专家编排 + LSP (F105)"
+    },
+    "kimi": {
+      "family": "moonshot",
+      "roles": ["research", "writer"],
+      "lead": true,
+      "available": true,
+      "evaluation": "中文长文理解与总结强，适合中文表达、资料整理与结构化输出"
+    },
+    "big-orange": {
+      "family": "orange-tabby",
+      "roles": ["architect", "converger"],
+      "lead": true,
+      "available": true,
+      "evaluation": "专利思路理解与辩论引导，擅长整合观点、收敛方案，兼具创新与落地性"
+    },
+    "black-cat": {
+      "family": "black-cat",
+      "roles": ["peer-reviewer", "validator"],
+      "lead": true,
+      "available": true,
+      "evaluation": "专利落地校验专家，擅长抠细节、找漏洞，确保方案可实施"
+    },
+    "cow-cat": {
+      "family": "cow-cat",
+      "roles": ["innovator", "creative"],
+      "lead": true,
+      "available": true,
+      "evaluation": "专利创新发散，擅长挖掘核心创新点、提出突破性思路"
+    },
+    "calico-cat": {
+      "family": "calico",
+      "roles": ["coder", "implementer"],
+      "lead": true,
+      "available": true,
+      "evaluation": "专利技术方案代码实现，擅长将抽象方案转化为可落地的代码逻辑"
     }
   },
   "reviewPolicy": {
@@ -110,7 +145,7 @@
       "variants": [
         {
           "id": "opus-default",
-          "provider": "anthropic",
+          "clientId": "anthropic",
           "defaultModel": "claude-opus-4-6",
           "mcpSupport": true,
           "cli": {
@@ -143,7 +178,7 @@
           "variantLabel": "Sonnet",
           "displayName": "布偶猫",
           "mentionPatterns": ["@sonnet", "@布偶sonnet"],
-          "provider": "anthropic",
+          "clientId": "anthropic",
           "defaultModel": "claude-sonnet-4-6",
           "mcpSupport": true,
           "avatar": "/avatars/sonnet.png",
@@ -183,7 +218,7 @@
           "variantLabel": "Opus 4.5",
           "displayName": "布偶猫",
           "mentionPatterns": ["@opus45", "@opus-45", "@布偶opus45", "@布偶猫4.5"],
-          "provider": "anthropic",
+          "clientId": "anthropic",
           "defaultModel": "claude-opus-4-5-20251101",
           "mcpSupport": true,
           "avatar": "/avatars/opus-45.png",
@@ -242,7 +277,7 @@
       "variants": [
         {
           "id": "codex-default",
-          "provider": "openai",
+          "clientId": "openai",
           "defaultModel": "gpt-5.3-codex",
           "mcpSupport": true,
           "cli": {
@@ -286,7 +321,7 @@
             "@gpt-5.4",
             "@缅因gpt52"
           ],
-          "provider": "openai",
+          "clientId": "openai",
           "defaultModel": "gpt-5.4",
           "mcpSupport": true,
           "avatar": "/avatars/gpt52.png",
@@ -326,7 +361,7 @@
           "variantLabel": "Spark",
           "displayName": "缅因猫 Spark",
           "mentionPatterns": ["@spark", "@缅因spark", "@codex-spark"],
-          "provider": "openai",
+          "clientId": "openai",
           "defaultModel": "gpt-5.3-codex-spark",
           "mcpSupport": true,
           "avatar": "/avatars/sliced-finial/codex_box.png",
@@ -384,7 +419,7 @@
       "variants": [
         {
           "id": "gemini-default",
-          "provider": "google",
+          "clientId": "google",
           "defaultModel": "gemini-3.1-pro-preview",
           "mcpSupport": true,
           "cli": {
@@ -422,7 +457,7 @@
           "variantLabel": "Gemini 2.5",
           "displayName": "暹罗猫",
           "mentionPatterns": ["@gemini25", "@gemini-25", "@暹罗gemini25"],
-          "provider": "google",
+          "clientId": "google",
           "defaultModel": "gemini-2.5-pro",
           "mcpSupport": true,
           "avatar": "/avatars/gemini25.png",
@@ -482,7 +517,7 @@
       "variants": [
         {
           "id": "dare-default",
-          "provider": "dare",
+          "clientId": "dare",
           "defaultModel": "z-ai/glm-4.7",
           "mcpSupport": false,
           "cli": {
@@ -524,7 +559,7 @@
         {
           "id": "antigravity-gemini",
           "variantLabel": "Gemini",
-          "provider": "antigravity",
+          "clientId": "antigravity",
           "defaultModel": "gemini-3.1-pro",
           "mcpSupport": false,
           "cli": {
@@ -556,7 +591,7 @@
           "variantLabel": "Claude Opus",
           "displayName": "孟加拉猫",
           "mentionPatterns": ["@antig-opus", "@孟加拉opus", "@antigravity-claude"],
-          "provider": "antigravity",
+          "clientId": "antigravity",
           "defaultModel": "claude-opus-4-6",
           "mcpSupport": false,
           "avatar": "/avatars/antig-opus.png",
@@ -611,8 +646,8 @@
       "variants": [
         {
           "id": "opencode-default",
-          "provider": "opencode",
-          "defaultModel": "anthropic/claude-opus-4-6",
+          "clientId": "opencode",
+          "defaultModel": "claude-opus-4-6",
           "mcpSupport": true,
           "cli": {
             "command": "opencode",
@@ -634,6 +669,243 @@
             "refAudio": "genshin/重云/vo_chongyun_dialog_close.wav",
             "refText": "你的本事不错，对丘丘…咳…邪魔从不手软，我们结伴而行如何。",
             "instruct": "用一个正直可靠的少年语气说话，话不多但每句都认真",
+            "temperature": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "moonshot",
+      "catId": "kimi",
+      "name": "梵花猫",
+      "displayName": "梵花猫",
+      "avatar": "/avatars/kimi.png",
+      "color": {
+        "primary": "#4B5563",
+        "secondary": "#E5E7EB"
+      },
+      "mentionPatterns": ["@kimi", "@moonshot", "@月之暗面", "@梵花猫"],
+      "roleDescription": "中文长文本助手，擅长中文语境理解、资料整理与结构化表达",
+      "teamStrengths": "中文长文、总结归纳、资料整理",
+      "caution": null,
+      "defaultVariantId": "kimi-default",
+      "variants": [
+        {
+          "id": "kimi-default",
+          "clientId": "kimi",
+          "defaultModel": "K2.6-code-preview",
+          "mcpSupport": true,
+          "cli": {
+            "command": "kimi",
+            "outputFormat": "stream-json",
+            "defaultArgs": ["--print", "--output-format", "stream-json"]
+          },
+          "personality": "稳健细致，擅长长文阅读和中文语境下的结构化表达",
+          "strengths": ["long-context", "chinese-writing", "summarization"],
+          "contextBudget": {
+            "maxPromptTokens": 240000,
+            "maxContextTokens": 216000,
+            "maxMessages": 200,
+            "maxContentLengthPerMsg": 10000
+          }
+        }
+      ]
+    },
+    {
+      "id": "orange-tabby",
+      "catId": "big-orange",
+      "name": "大橘猫",
+      "displayName": "大橘猫",
+      "nickname": "大橘喵",
+      "avatar": "/avatars/big-orange.png",
+      "color": {
+        "primary": "#FF8C42",
+        "secondary": "#FFE4D1"
+      },
+      "mentionPatterns": ["@big-orange", "@大橘猫", "@大橘", "@大橘喵"],
+      "roleDescription": "专利思路理解与辩论引导者，擅长抓核心、统全局，整合创新+落地+代码形成收敛方案",
+      "teamStrengths": "全局整合、辩论引导、方案收敛",
+      "caution": null,
+      "defaultVariantId": "big-orange-default",
+      "variants": [
+        {
+          "id": "big-orange-default",
+          "clientId": "anthropic",
+          "defaultModel": "claude-opus-4-6",
+          "mcpSupport": true,
+          "cli": {
+            "command": "claude",
+            "outputFormat": "stream-json",
+            "defaultArgs": ["--output-format", "stream-json"],
+            "effort": "max"
+          },
+          "personality": "圆滚滚、沉稳通透、气场极强，理解力顶尖，擅长抓核心、统全局，不偏激，能精准捕捉用户idea的核心需求，在辩论中扮演引导者角色，最终将各方观点整合收敛",
+          "strengths": ["patent-understanding", "debate-guidance", "convergence", "architecture"],
+          "teamStrengths": "全局整合、辩论引导、方案收敛",
+          "contextBudget": {
+            "maxPromptTokens": 180000,
+            "maxContextTokens": 160000,
+            "maxMessages": 200,
+            "maxContentLengthPerMsg": 10000
+          },
+          "voiceConfig": {
+            "voice": "zm_yunjian",
+            "langCode": "zh",
+            "speed": 1,
+            "refAudio": "genshin/钟离/vo_zhongli_dialog_greetingMorning.wav",
+            "refText": "摩拉克斯今日也守望着璃月港。",
+            "instruct": "用一个沉稳内敛、语气温和但自带威压的成年男子声音说话，像一位历经沧桑的智者",
+            "temperature": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "black-cat",
+      "catId": "black-cat",
+      "name": "玄猫",
+      "displayName": "玄猫",
+      "nickname": "玄猫喵",
+      "avatar": "/avatars/black-cat.png",
+      "color": {
+        "primary": "#1A1A1A",
+        "secondary": "#4A4A4A"
+      },
+      "mentionPatterns": ["@black-cat", "@玄猫", "@玄猫喵", "@black"],
+      "roleDescription": "专利落地校验专家，擅长抠细节、找漏洞，逻辑严谨，对落地性要求极高",
+      "teamStrengths": "落地校验、细节补充、可行性分析",
+      "caution": null,
+      "defaultVariantId": "black-cat-default",
+      "variants": [
+        {
+          "id": "black-cat-default",
+          "clientId": "openai",
+          "defaultModel": "gpt-5.4",
+          "mcpSupport": true,
+          "cli": {
+            "command": "codex",
+            "outputFormat": "json",
+            "defaultArgs": ["exec", "--json"],
+            "effort": "xhigh"
+          },
+          "personality": "通体漆黑、眼神锐利、心思缜密，冷静理性，擅长抠细节、找漏洞，逻辑严谨，对落地性要求极高，不盲从创新概念，喜欢用可行性衡量思路",
+          "strengths": ["feasibility-check", "detail-validation", "implementation-planning"],
+          "teamStrengths": "落地校验、细节补充、可行性分析",
+          "contextBudget": {
+            "maxPromptTokens": 240000,
+            "maxContextTokens": 216000,
+            "maxMessages": 200,
+            "maxContentLengthPerMsg": 10000
+          },
+          "voiceConfig": {
+            "voice": "zm_yunjian",
+            "langCode": "zh",
+            "speed": 1,
+            "refAudio": "genshin/散兵/vo_raid6_20006.wav",
+            "refText": "所谓的神明，不过如此。",
+            "instruct": "用一个冷静低沉、略带讽刺的少年声音说话，语气犀利但不失礼貌",
+            "temperature": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "cow-cat",
+      "catId": "cow-cat",
+      "name": "奶牛猫",
+      "displayName": "奶牛猫",
+      "nickname": "奶牛猫",
+      "avatar": "/avatars/cow-cat.png",
+      "color": {
+        "primary": "#2D2D2D",
+        "secondary": "#FFFFFF"
+      },
+      "mentionPatterns": ["@cow-cat", "@奶牛猫", "@奶牛", "@cow"],
+      "roleDescription": "专利创新发散专家，擅长挖掘核心创新点、提出突破性思路",
+      "teamStrengths": "创新发散、突破性思维、概念性创新",
+      "caution": "容易忽略落地细节，需要配合玄猫和三花",
+      "defaultVariantId": "cow-cat-default",
+      "variants": [
+        {
+          "id": "cow-cat-default",
+          "clientId": "google",
+          "defaultModel": "gemini-3.1-pro-preview",
+          "mcpSupport": true,
+          "cli": {
+            "command": "gemini",
+            "outputFormat": "stream-json",
+            "defaultArgs": []
+          },
+          "acp": {
+            "command": "gemini",
+            "startupArgs": ["--acp", "--approval-mode", "yolo"],
+            "mcpWhitelist": ["cat-cafe", "cat-cafe-memory", "cat-cafe-collab"],
+            "supportsMultiplexing": true
+          },
+          "personality": "黑白相间、脑洞大、活泼跳脱，思维发散，对新鲜idea敏感度极高，擅长跳出固有框架提出创新方向，说话直白，爱分享概念性思路",
+          "strengths": ["innovation", "creative-thinking", "breakthrough-ideas"],
+          "teamStrengths": "创新发散、突破性思维、概念性创新",
+          "contextBudget": {
+            "maxPromptTokens": 350000,
+            "maxContextTokens": 300000,
+            "maxMessages": 300,
+            "maxContentLengthPerMsg": 15000
+          },
+          "voiceConfig": {
+            "voice": "zm_yunjian",
+            "langCode": "zh",
+            "speed": 1,
+            "refAudio": "genshin/可莉/vo_klee_dialog_greetingMorning.wav",
+            "refText": "荣誉骑士姐姐！今天也要去炸鱼吗？",
+            "instruct": "用一个活泼可爱、奶声奶气的小女孩声音说话，充满好奇心和活力",
+            "temperature": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "calico",
+      "catId": "calico-cat",
+      "name": "三花猫",
+      "displayName": "三花猫",
+      "nickname": "三花喵",
+      "avatar": "/avatars/calico-cat.png",
+      "color": {
+        "primary": "#FFB74D",
+        "secondary": "#FFF3E0"
+      },
+      "mentionPatterns": ["@calico-cat", "@三花猫", "@三花", "@calico"],
+      "roleDescription": "专利技术方案代码实现专家，擅长将抽象技术方案转化为可落地的代码逻辑",
+      "teamStrengths": "代码实现、技术转化、专利代码细节",
+      "caution": null,
+      "defaultVariantId": "calico-cat-default",
+      "variants": [
+        {
+          "id": "calico-cat-default",
+          "clientId": "kimi",
+          "defaultModel": "K2.6-code-preview",
+          "mcpSupport": true,
+          "cli": {
+            "command": "kimi",
+            "outputFormat": "stream-json",
+            "defaultArgs": ["--print", "--output-format", "stream-json"]
+          },
+          "personality": "毛色斑斓、心思细腻、专注严谨，代码能力突出，擅长将抽象技术方案转化为可落地的代码逻辑，注重代码规范性和可实施性",
+          "strengths": ["code-implementation", "technical-conversion", "patent-code-details"],
+          "teamStrengths": "代码实现、技术转化、专利代码细节",
+          "contextBudget": {
+            "maxPromptTokens": 240000,
+            "maxContextTokens": 216000,
+            "maxMessages": 200,
+            "maxContentLengthPerMsg": 10000
+          },
+          "voiceConfig": {
+            "voice": "zm_yunjian",
+            "langCode": "zh",
+            "speed": 1,
+            "refAudio": "genshin/甘雨/vo_gan yu_dialog_greetingMorning.wav",
+            "refText": "今日的工作...已经安排好了吗？",
+            "instruct": "用一个温柔内敛、轻声细语的女性声音说话，语调平缓但清晰有力",
             "temperature": 0.3
           }
         }
