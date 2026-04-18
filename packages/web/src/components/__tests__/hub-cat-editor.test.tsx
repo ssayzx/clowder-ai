@@ -783,6 +783,120 @@ describe('HubCatEditor', () => {
     expect(optionLabels).toContain('Claude Sponsor（API Key）');
   });
 
+  it('keeps fallback builtin OAuth available when editing a cat after switching to an API key', async () => {
+    const cat = {
+      id: 'maine',
+      name: 'Maine Coon',
+      displayName: 'Maine Coon',
+      clientId: 'anthropic',
+      accountRef: 'claude-sponsor',
+      defaultModel: 'claude-opus-4-6',
+      color: { primary: '#16a34a', secondary: '#bbf7d0' },
+      mentionPatterns: ['@maine'],
+      avatar: '/avatars/maine.png',
+      roleDescription: 'reviewer',
+    } as CatData;
+
+    mockApiFetch.mockImplementation((path: string) => {
+      if (path === '/api/accounts') {
+        return Promise.resolve(
+          jsonResponse({
+            projectPath: '/tmp/project',
+            providers: [
+              {
+                id: 'claude-sponsor',
+                provider: 'claude-sponsor',
+                displayName: 'Claude Sponsor',
+                name: 'Claude Sponsor',
+                authType: 'api_key',
+                protocol: 'anthropic',
+                builtin: false,
+                mode: 'api_key',
+                models: ['claude-opus-4-6'],
+                hasApiKey: true,
+                createdAt: '2026-03-18T00:00:00.000Z',
+                updatedAt: '2026-03-18T00:00:00.000Z',
+              },
+            ],
+          }),
+        );
+      }
+      if (path === '/api/config/session-strategy') {
+        return Promise.resolve(jsonResponse({ cats: [] }));
+      }
+      throw new Error(`Unexpected apiFetch path: ${path}`);
+    });
+
+    await act(async () => {
+      root.render(React.createElement(HubCatEditor, { cat, open: true, onClose: vi.fn(), onSaved: vi.fn() }));
+    });
+    await flushEffects();
+
+    const providerSelect = queryField<HTMLSelectElement>(container, 'select[aria-label="认证信息"]');
+    const optionLabels = Array.from(providerSelect.options).map((option) => option.textContent ?? '');
+    expect(optionLabels).toContain('Claude (OAuth)（内置）');
+    expect(optionLabels).toContain('Claude Sponsor（API Key）');
+
+    await changeField(providerSelect, 'claude', 'change');
+    expect(providerSelect.value).toBe('claude');
+  });
+
+  it('defaults an empty Codex binding to fallback builtin OAuth instead of the blank option', async () => {
+    const cat = {
+      id: 'codex-cat',
+      name: 'Codex',
+      displayName: 'Codex',
+      clientId: 'openai',
+      accountRef: '',
+      defaultModel: 'gpt-5.4',
+      color: { primary: '#16a34a', secondary: '#bbf7d0' },
+      mentionPatterns: ['@codex'],
+      avatar: '/avatars/codex.png',
+      roleDescription: 'reviewer',
+    } as CatData;
+
+    mockApiFetch.mockImplementation((path: string) => {
+      if (path === '/api/accounts') {
+        return Promise.resolve(
+          jsonResponse({
+            projectPath: '/tmp/project',
+            providers: [
+              {
+                id: 'my-claude',
+                provider: 'my-claude',
+                displayName: 'my-claude',
+                name: 'my-claude',
+                authType: 'api_key',
+                protocol: 'anthropic',
+                builtin: false,
+                mode: 'api_key',
+                models: ['gpt-5.4'],
+                hasApiKey: true,
+                createdAt: '2026-03-18T00:00:00.000Z',
+                updatedAt: '2026-03-18T00:00:00.000Z',
+              },
+            ],
+          }),
+        );
+      }
+      if (path === '/api/config/session-strategy') {
+        return Promise.resolve(jsonResponse({ cats: [] }));
+      }
+      throw new Error(`Unexpected apiFetch path: ${path}`);
+    });
+
+    await act(async () => {
+      root.render(React.createElement(HubCatEditor, { cat, open: true, onClose: vi.fn(), onSaved: vi.fn() }));
+    });
+    await flushEffects();
+
+    const providerSelect = queryField<HTMLSelectElement>(container, 'select[aria-label="认证信息"]');
+    const optionLabels = Array.from(providerSelect.options).map((option) => option.textContent ?? '');
+    expect(optionLabels).toContain('Codex (OAuth)（内置）');
+    expect(optionLabels).toContain('my-claude（API Key）');
+    expect(providerSelect.value).toBe('codex');
+  });
+
   it('keeps builtin accounts client-specific while exposing all API key accounts', () => {
     const profiles: ProfileItem[] = [
       {

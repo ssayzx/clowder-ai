@@ -24,6 +24,7 @@ import {
 } from './hub-cat-editor.model';
 import { AccountSection, IdentitySection, RoutingSection } from './hub-cat-editor.sections';
 import { AdvancedRuntimeSection } from './hub-cat-editor-advanced';
+import { ensureBuiltinAccounts } from './hub-accounts.view';
 import { PersistenceBanner } from './hub-cat-editor-fields';
 import type { CatStrategyEntry } from './hub-strategy-types';
 import { useConfirm } from './useConfirm';
@@ -98,7 +99,7 @@ export function HubCatEditor({ cat, draft, open, onClose, onSaved }: HubCatEdito
         return (await res.json()) as AccountsResponse;
       })
       .then((body) => {
-        if (!cancelled) setProfiles(body.providers);
+        if (!cancelled) setProfiles(ensureBuiltinAccounts(body.providers));
       })
       .catch((err) => {
         if (!cancelled) setError(err instanceof Error ? err.message : '账号配置加载失败');
@@ -189,11 +190,17 @@ export function HubCatEditor({ cat, draft, open, onClose, onSaved }: HubCatEdito
       return;
     }
     setForm((prev) => {
-      if (prev.accountRef.trim().length === 0 && (cat || !draft)) {
-        return prev;
-      }
       if (availableProfiles.length === 0) return prev;
       const preferredBuiltin = builtinAccountIdForClient(prev.clientId);
+      if (prev.accountRef.trim().length === 0) {
+        const preferredBuiltinProfile = preferredBuiltin
+          ? availableProfiles.find((profile) => profile.id === preferredBuiltin)
+          : null;
+        if (preferredBuiltinProfile && prev.clientId !== 'opencode') {
+          return { ...prev, accountRef: preferredBuiltinProfile.id };
+        }
+        return prev;
+      }
       const nextProfile =
         availableProfiles.find((profile) => profile.id === prev.accountRef) ??
         (preferredBuiltin ? availableProfiles.find((profile) => profile.id === preferredBuiltin) : null) ??

@@ -102,6 +102,35 @@ describe('accounts routes', () => {
     await app.close();
   });
 
+  it('GET /api/accounts includes fallback builtin OAuth accounts', async () => {
+    const Fastify = (await import('fastify')).default;
+    const { accountsRoutes } = await import('../dist/routes/accounts.js');
+    const app = Fastify();
+    await app.register(accountsRoutes);
+    await app.ready();
+
+    const projectDir = await makeTmpDir('builtin-fallbacks');
+    setGlobalRoot(projectDir);
+    try {
+      const listRes = await app.inject({
+        method: 'GET',
+        url: `/api/accounts?projectPath=${encodeURIComponent(projectDir)}`,
+        headers: AUTH_HEADERS,
+      });
+      assert.equal(listRes.statusCode, 200);
+      const list = listRes.json();
+      const codex = list.providers.find((p) => p.id === 'codex');
+      assert.ok(codex, 'codex builtin OAuth account should appear in list');
+      assert.equal(codex.authType, 'oauth');
+      assert.equal(codex.builtin, true);
+      assert.equal(codex.clientId, 'openai');
+    } finally {
+      restoreGlobalRoot();
+      await rm(projectDir, { recursive: true, force: true });
+      await app.close();
+    }
+  });
+
   it('create + list profile flow', async () => {
     const Fastify = (await import('fastify')).default;
     const { accountsRoutes } = await import('../dist/routes/accounts.js');

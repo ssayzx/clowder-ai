@@ -793,6 +793,8 @@ export async function* invokeSingleCat(deps: InvocationDeps, params: InvocationP
       if (resolvedAccount?.authType === 'api_key') {
         callbackEnv.CAT_CAFE_ANTHROPIC_PROFILE_MODE = 'api_key';
         if (resolvedAccount.apiKey) callbackEnv.CAT_CAFE_ANTHROPIC_API_KEY = resolvedAccount.apiKey;
+        // Also pass as AUTH_TOKEN for third-party APIs that require Bearer auth (e.g. aicoding)
+        if (resolvedAccount.apiKey) callbackEnv.CAT_CAFE_ANTHROPIC_AUTH_TOKEN = resolvedAccount.apiKey;
         if (resolvedAccount.models?.length && provider !== 'opencode') {
           callbackEnv.CAT_CAFE_ANTHROPIC_MODEL_OVERRIDE = resolvedAccount.models[0];
         }

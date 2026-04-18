@@ -37,6 +37,15 @@ const BUILTIN_CLIENT_FOR_ID: Record<string, string> = {
   builtin_opencode: 'opencode',
 };
 
+const FALLBACK_BUILTIN_ACCOUNTS: Array<{ id: string; clientId: string; displayName: string }> = [
+  { id: 'claude', clientId: 'anthropic', displayName: 'Claude (OAuth)' },
+  { id: 'codex', clientId: 'openai', displayName: 'Codex (OAuth)' },
+  { id: 'gemini', clientId: 'google', displayName: 'Gemini (OAuth)' },
+  { id: 'kimi', clientId: 'kimi', displayName: 'Kimi (OAuth)' },
+  { id: 'dare', clientId: 'dare', displayName: 'Dare (client-auth)' },
+  { id: 'opencode', clientId: 'opencode', displayName: 'OpenCode (client-auth)' },
+];
+
 /** Synthesize a ProviderProfileView-compatible object from AccountConfig (backward compat for Hub UI). */
 function accountToView(id: string, account: AccountConfig, apiKeyPresent: boolean) {
   const isBuiltin = account.authType === 'oauth';
@@ -56,6 +65,34 @@ function accountToView(id: string, account: AccountConfig, apiKeyPresent: boolea
     createdAt: '',
     updatedAt: '',
   };
+}
+
+function withFallbackBuiltinAccounts(providers: ReturnType<typeof accountToView>[]) {
+  const next = [...providers];
+  const seenBuiltinClients = new Set(
+    providers
+      .filter((provider) => provider.builtin)
+      .map((provider) => provider.clientId)
+      .filter(Boolean),
+  );
+  const existingIds = new Set(providers.map((provider) => provider.id));
+
+  for (const spec of FALLBACK_BUILTIN_ACCOUNTS) {
+    if (seenBuiltinClients.has(spec.clientId)) continue;
+    if (existingIds.has(spec.id)) continue;
+    next.push(
+      accountToView(
+        spec.id,
+        {
+          authType: 'oauth',
+          displayName: spec.displayName,
+        },
+        false,
+      ),
+    );
+  }
+
+  return next;
 }
 
 /** Derive a slug-like ID from display name, avoiding collisions with existing accounts. */
@@ -217,7 +254,7 @@ export const accountsRoutes: FastifyPluginAsync = async (app) => {
     );
     return {
       projectPath: projectRoot,
-      providers,
+      providers: withFallbackBuiltinAccounts(providers),
     };
   });
 

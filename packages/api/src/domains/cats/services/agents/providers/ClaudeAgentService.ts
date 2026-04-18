@@ -38,6 +38,7 @@ const PERMISSION_MODE = 'bypassPermissions';
 
 const ANTHROPIC_PROFILE_MODE_KEY = 'CAT_CAFE_ANTHROPIC_PROFILE_MODE';
 const ANTHROPIC_PROFILE_API_KEY = 'CAT_CAFE_ANTHROPIC_API_KEY';
+const ANTHROPIC_PROFILE_AUTH_TOKEN = 'CAT_CAFE_ANTHROPIC_AUTH_TOKEN';
 const ANTHROPIC_PROFILE_BASE_URL = 'CAT_CAFE_ANTHROPIC_BASE_URL';
 const ANTHROPIC_MODEL_OVERRIDE_KEY = 'CAT_CAFE_ANTHROPIC_MODEL_OVERRIDE';
 
@@ -80,8 +81,15 @@ function buildClaudeEnvOverrides(callbackEnv?: Record<string, string>): Record<s
   const mode = callbackEnv?.[ANTHROPIC_PROFILE_MODE_KEY];
   if (mode === 'api_key') {
     const apiKey = callbackEnv?.[ANTHROPIC_PROFILE_API_KEY]?.trim();
+    const authToken = callbackEnv?.[ANTHROPIC_PROFILE_AUTH_TOKEN]?.trim();
     const baseUrl = callbackEnv?.[ANTHROPIC_PROFILE_BASE_URL]?.trim();
-    if (apiKey) env.ANTHROPIC_API_KEY = apiKey;
+    // ANTHROPIC_AUTH_TOKEN takes priority over ANTHROPIC_API_KEY for Bearer auth
+    // (required by third-party APIs like aicoding that only support Bearer tokens)
+    if (authToken) {
+      env.ANTHROPIC_AUTH_TOKEN = authToken;
+    } else if (apiKey) {
+      env.ANTHROPIC_API_KEY = apiKey;
+    }
     if (baseUrl) {
       // Claude CLI internally appends /v1 to the base URL.
       // If the user configured it with /v1 already, strip it to prevent
