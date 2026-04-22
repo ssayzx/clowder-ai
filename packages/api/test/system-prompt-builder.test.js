@@ -295,6 +295,98 @@ describe('SystemPromptBuilder', () => {
     assert.ok(codexId.includes('出口一问'), 'Codex workflow should include exit check (出口一问)');
   });
 
+  test('buildStaticIdentity includes lead-drafter patent review workflows for patent cats', async () => {
+    const { buildStaticIdentity } = await import('../dist/domains/cats/services/context/SystemPromptBuilder.js');
+    const { loadCatConfig, toAllCatConfigs } = await import('../dist/config/cat-config-loader.js');
+
+    const originalConfigs = catRegistry.getAllConfigs();
+    catRegistry.reset();
+    try {
+      const runtimeConfigs = toAllCatConfigs(loadCatConfig());
+      for (const [id, config] of Object.entries(runtimeConfigs)) {
+        catRegistry.register(id, config);
+      }
+
+      const bigOrange = buildStaticIdentity('big-orange');
+      assert.ok(bigOrange.includes('专利工作流（大橘猫：主笔交付与评审收敛）'));
+      assert.ok(bigOrange.includes('## 家规（专利组）'));
+      assert.ok(bigOrange.includes('主动 @ 触发点'));
+      assert.ok(bigOrange.includes('v0 推荐交付单元'));
+      assert.ok(bigOrange.includes('多个完整交付单元'));
+      assert.ok(bigOrange.includes('3000 token 是单次回复的安全输出预算'));
+      assert.ok(bigOrange.includes('完整专利可以跨多轮累计完成'));
+      assert.ok(bigOrange.includes('不要要求铲屎官主动 @'));
+      assert.ok(bigOrange.includes('已完成：'));
+      assert.ok(bigOrange.includes('@奶牛猫'));
+      assert.ok(bigOrange.includes('@三花猫'));
+      assert.ok(bigOrange.includes('@玄猫'));
+      assert.ok(bigOrange.includes('采纳/部分采纳/不采纳'));
+
+      const cow = buildStaticIdentity('cow-cat');
+      assert.ok(cow.includes('专利工作流（奶牛猫：创新性与保护空间审查）'));
+      assert.ok(cow.includes('主动 @ 触发点'));
+      assert.ok(cow.includes('每轮控制在 2000 token'));
+      assert.ok(cow.includes('绕开路径'));
+      assert.ok(cow.includes('@大橘猫'));
+
+      const calico = buildStaticIdentity('calico-cat');
+      assert.ok(calico.includes('专利工作流（三花猫：逻辑自洽审查）'));
+      assert.ok(calico.includes('主动 @ 触发点'));
+      assert.ok(calico.includes('不另写完整专利正文'));
+      assert.ok(calico.includes('逻辑断点'));
+      assert.ok(calico.includes('自洽性问题'));
+      assert.ok(calico.includes('@大橘猫'));
+
+      const black = buildStaticIdentity('black-cat');
+      assert.ok(black.includes('专利工作流（玄猫：可实现性审查）'));
+      assert.ok(black.includes('主动 @ 触发点'));
+      assert.ok(black.includes('不写完整替代稿'));
+      assert.ok(black.includes('复杂度收益比'));
+      assert.ok(black.includes('P1 必须修'));
+      assert.ok(black.includes('@大橘猫'));
+    } finally {
+      catRegistry.reset();
+      for (const [id, config] of Object.entries(originalConfigs)) {
+        catRegistry.register(id, config);
+      }
+    }
+  });
+
+  test('buildStaticIdentity patent cats only list callable cats from the same collaboration group', async () => {
+    const { buildStaticIdentity } = await import('../dist/domains/cats/services/context/SystemPromptBuilder.js');
+    const { loadCatConfig, toAllCatConfigs } = await import('../dist/config/cat-config-loader.js');
+
+    const originalConfigs = catRegistry.getAllConfigs();
+    catRegistry.reset();
+    try {
+      const runtimeConfigs = toAllCatConfigs(loadCatConfig());
+      for (const [id, config] of Object.entries(runtimeConfigs)) {
+        catRegistry.register(id, config);
+      }
+
+      const bigOrange = buildStaticIdentity('big-orange');
+      assert.ok(bigOrange.includes('@奶牛猫'));
+      assert.ok(bigOrange.includes('@三花猫'));
+      assert.ok(bigOrange.includes('@玄猫'));
+      assert.ok(!bigOrange.includes('@缅因猫'));
+      assert.ok(!bigOrange.includes('@布偶猫'));
+      assert.ok(!bigOrange.includes('@暹罗猫'));
+
+      const rosterSection = bigOrange.split('## 队友名册')[1];
+      assert.ok(rosterSection, 'Roster section should exist');
+      assert.ok(rosterSection.includes('奶牛猫'));
+      assert.ok(rosterSection.includes('三花猫'));
+      assert.ok(rosterSection.includes('玄猫'));
+      assert.ok(!rosterSection.includes('缅因猫'));
+      assert.ok(!rosterSection.includes('布偶猫'));
+    } finally {
+      catRegistry.reset();
+      for (const [id, config] of Object.entries(originalConfigs)) {
+        catRegistry.register(id, config);
+      }
+    }
+  });
+
   test('buildStaticIdentity is deterministic', async () => {
     const { buildStaticIdentity } = await import('../dist/domains/cats/services/context/SystemPromptBuilder.js');
     assert.equal(buildStaticIdentity('opus'), buildStaticIdentity('opus'));

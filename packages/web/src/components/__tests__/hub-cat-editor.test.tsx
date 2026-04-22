@@ -346,6 +346,134 @@ describe('HubCatEditor', () => {
     expect(onSaved).toHaveBeenCalledTimes(1);
   });
 
+  it('loads and renders prompt preview for an existing cat', async () => {
+    const existingCat = {
+      id: 'codex',
+      name: 'codex',
+      displayName: '缅因猫',
+      clientId: 'openai',
+      defaultModel: 'gpt-5.4',
+      color: { primary: '#16a34a', secondary: '#bbf7d0' },
+      mentionPatterns: ['@codex'],
+      avatar: '/avatars/codex.png',
+      roleDescription: '审查',
+      personality: '严谨',
+      source: 'seed',
+    } as CatData;
+
+    mockApiFetch.mockImplementation((path: string, init?: RequestInit) => {
+      if (path === '/api/accounts') {
+        return Promise.resolve(
+          jsonResponse({
+            projectPath: '/tmp/project',
+            activeProfileId: 'codex',
+            providers: [
+              {
+                id: 'codex',
+                provider: 'codex',
+                displayName: 'Codex',
+                name: 'Codex',
+                authType: 'oauth',
+                protocol: 'openai',
+                builtin: true,
+                mode: 'subscription',
+                models: ['gpt-5.4'],
+                hasApiKey: false,
+                createdAt: '2026-03-18T00:00:00.000Z',
+                updatedAt: '2026-03-18T00:00:00.000Z',
+              },
+            ],
+          }),
+        );
+      }
+      if (path === '/api/config/session-strategy') {
+        return Promise.resolve(jsonResponse({ cats: [] }));
+      }
+      if (path === '/api/config' && !init?.method) {
+        return Promise.resolve(jsonResponse({ config: {} }));
+      }
+      if (path === '/api/cats/codex/prompt-preview') {
+        return Promise.resolve(
+          jsonResponse({
+            catId: 'codex',
+            displayName: '缅因猫',
+            promptType: 'staticIdentity',
+            prompt: '你是 缅因猫（codex）。\n角色：审查',
+          }),
+        );
+      }
+      throw new Error(`Unexpected apiFetch path: ${path}`);
+    });
+
+    await act(async () => {
+      root.render(React.createElement(HubCatEditor, { open: true, cat: existingCat, onClose: vi.fn(), onSaved: vi.fn() }));
+    });
+    await flushEffects();
+
+    const previewButton = Array.from(container.querySelectorAll('button')).find(
+      (button) => button.textContent === '查看系统提示词',
+    );
+    expect(previewButton).toBeTruthy();
+
+    await act(async () => {
+      previewButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    await flushEffects();
+
+    expect(mockApiFetch).toHaveBeenCalledWith('/api/cats/codex/prompt-preview');
+    expect(container.textContent).toContain('收起预览');
+    expect(container.textContent).toContain('你是 缅因猫（codex）。');
+    expect(container.textContent).toContain('角色：审查');
+  });
+
+  it('shows prompt preview load errors for an existing cat', async () => {
+    const existingCat = {
+      id: 'codex',
+      name: 'codex',
+      displayName: '缅因猫',
+      clientId: 'openai',
+      defaultModel: 'gpt-5.4',
+      color: { primary: '#16a34a', secondary: '#bbf7d0' },
+      mentionPatterns: ['@codex'],
+      avatar: '/avatars/codex.png',
+      roleDescription: '审查',
+      personality: '严谨',
+      source: 'seed',
+    } as CatData;
+
+    mockApiFetch.mockImplementation((path: string, init?: RequestInit) => {
+      if (path === '/api/accounts') {
+        return Promise.resolve(jsonResponse({ projectPath: '/tmp/project', activeProfileId: 'codex', providers: [] }));
+      }
+      if (path === '/api/config/session-strategy') {
+        return Promise.resolve(jsonResponse({ cats: [] }));
+      }
+      if (path === '/api/config' && !init?.method) {
+        return Promise.resolve(jsonResponse({ config: {} }));
+      }
+      if (path === '/api/cats/codex/prompt-preview') {
+        return Promise.resolve(jsonResponse({ error: 'Cat not found' }, 404));
+      }
+      throw new Error(`Unexpected apiFetch path: ${path}`);
+    });
+
+    await act(async () => {
+      root.render(React.createElement(HubCatEditor, { open: true, cat: existingCat, onClose: vi.fn(), onSaved: vi.fn() }));
+    });
+    await flushEffects();
+
+    const previewButton = Array.from(container.querySelectorAll('button')).find(
+      (button) => button.textContent === '查看系统提示词',
+    );
+
+    await act(async () => {
+      previewButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    await flushEffects();
+
+    expect(container.textContent).toContain('Cat not found');
+  });
+
   it('dispatches guide:confirm only after a successful member save', async () => {
     const onSaved = vi.fn(() => Promise.resolve());
     const onGuideConfirm = vi.fn();

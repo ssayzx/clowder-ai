@@ -91,6 +91,16 @@ export interface CatVariant {
   readonly teamStrengths?: string;
   /** F-Ground-3: Caution note. null = explicitly no caution (overrides breed). */
   readonly caution?: string | null;
+  /** Optional resolved workflow prompt injected into the static system identity. */
+  readonly workflowPrompt?: string;
+  /** Optional path to workflow prompt Markdown, relative to the config file directory. */
+  readonly workflowPromptPath?: string;
+  /** Collaboration isolation group. Cats only see/@ cats in the same group. */
+  readonly collaborationGroup?: string;
+  /** Optional resolved governance prompt injected into the static system identity. */
+  readonly governancePrompt?: string;
+  /** Optional path to governance prompt Markdown, relative to the config file directory. */
+  readonly governancePromptPath?: string;
   /** F127: Extra CLI --config key=value pairs passed to the client at invocation time.
    *  Each entry is a raw config string, e.g. 'model_reasoning_effort="low"'. */
   readonly cliConfigArgs?: readonly string[];
@@ -156,6 +166,16 @@ export interface CatBreed {
   readonly teamStrengths?: string;
   /** F-Ground-3: Caution note. null = explicitly no caution (overrides breed). */
   readonly caution?: string | null;
+  /** Optional resolved workflow prompt injected into the static system identity. */
+  readonly workflowPrompt?: string;
+  /** Optional path to workflow prompt Markdown, relative to the config file directory. */
+  readonly workflowPromptPath?: string;
+  /** Collaboration isolation group. Cats only see/@ cats in the same group. */
+  readonly collaborationGroup?: string;
+  /** Optional resolved governance prompt injected into the static system identity. */
+  readonly governancePrompt?: string;
+  /** Optional path to governance prompt Markdown, relative to the config file directory. */
+  readonly governancePromptPath?: string;
 }
 
 // ── F032: Roster types for collaboration rules ─────────────────────────

@@ -64,6 +64,12 @@ export interface CatConfig {
   readonly teamStrengths?: string;
   /** F-Ground-3: Caution note for teammate roster. null = explicitly no warning (overrides breed). */
   readonly caution?: string | null;
+  /** Optional resolved workflow prompt injected into the static system identity. */
+  readonly workflowPrompt?: string;
+  /** Collaboration isolation group. Cats only see/@ cats in the same group. */
+  readonly collaborationGroup?: string;
+  /** Optional resolved governance prompt injected into the static system identity. */
+  readonly governancePrompt?: string;
   /** F127 Screen 3: editable strength tags */
   readonly strengths?: readonly string[];
   /** F127 Screen 3: whether session chain is enabled for this member */

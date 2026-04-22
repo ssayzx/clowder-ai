@@ -312,4 +312,43 @@ describe('cats routes read runtime catalog', { concurrency: false }, () => {
     assert.equal(body.id, 'runtime-antigravity');
     assert.equal(body.displayName, '运行时桥接猫');
   });
+
+  it('GET /api/cats/:id/prompt-preview returns static identity for runtime-only cats', async () => {
+    const projectRoot = createRuntimeCatalogProject(makeCatalog('runtime-cat', '运行时猫'));
+    process.env.CAT_TEMPLATE_PATH = join(projectRoot, 'cat-template.json');
+
+    const Fastify = (await import('fastify')).default;
+    const { catsRoutes } = await import('../dist/routes/cats.js');
+
+    const app = Fastify();
+    await app.register(catsRoutes);
+
+    const res = await app.inject({ method: 'GET', url: '/api/cats/runtime-cat/prompt-preview' });
+    assert.equal(res.statusCode, 200);
+    const body = JSON.parse(res.body);
+    assert.equal(body.catId, 'runtime-cat');
+    assert.equal(body.displayName, '运行时猫');
+    assert.equal(body.promptType, 'staticIdentity');
+    assert.match(body.prompt, /你是 运行时猫/);
+    assert.match(body.prompt, /角色：runtime cat/);
+
+    await app.close();
+  });
+
+  it('GET /api/cats/:id/prompt-preview returns 404 for unknown cats', async () => {
+    const projectRoot = createTemplateOnlyProject(makeCatalog('template-cat', '模板猫'));
+    process.env.CAT_TEMPLATE_PATH = join(projectRoot, 'cat-template.json');
+
+    const Fastify = (await import('fastify')).default;
+    const { catsRoutes } = await import('../dist/routes/cats.js');
+
+    const app = Fastify();
+    await app.register(catsRoutes);
+
+    const res = await app.inject({ method: 'GET', url: '/api/cats/missing-cat/prompt-preview' });
+    assert.equal(res.statusCode, 404);
+    assert.deepEqual(JSON.parse(res.body), { error: 'Cat not found' });
+
+    await app.close();
+  });
 });

@@ -12,6 +12,7 @@ import {
   type ClientId,
   type ContextBudget,
   catRegistry,
+  createCatId,
   getCliEffortOptionsForProvider,
   getDefaultCliEffortForProvider,
   isValidCliEffortForProvider,
@@ -33,6 +34,7 @@ import { configEventBus, createChangeSetId } from '../config/config-event-bus.js
 import { resolveProjectTemplatePath } from '../config/project-template-path.js';
 import { createRuntimeCat, deleteRuntimeCat, updateRuntimeCat } from '../config/runtime-cat-catalog.js';
 import { deleteRuntimeOverride, getRuntimeOverride, setRuntimeOverride } from '../config/session-strategy-overrides.js';
+import { buildStaticIdentity } from '../domains/cats/services/context/SystemPromptBuilder.js';
 import { resolveActiveProjectRoot } from '../utils/active-project-root.js';
 import { resolveHeaderUserId } from '../utils/request-identity.js';
 
@@ -393,6 +395,11 @@ function getResolvedCats(projectRoot: string) {
   }
 }
 
+function ensureCatRegistered(catId: string, config: CatConfig): void {
+  if (catRegistry.tryGet(catId)) return;
+  catRegistry.register(catId, config);
+}
+
 export const catsRoutes: FastifyPluginAsync = async (app) => {
   // GET /api/cats - 获取所有猫猫配置
   app.get('/api/cats', async () => {
@@ -735,6 +742,26 @@ export const catsRoutes: FastifyPluginAsync = async (app) => {
       }
       return { error: message };
     }
+  });
+
+  app.get<{ Params: { id: string } }>('/api/cats/:id/prompt-preview', async (request, reply) => {
+    const { id } = request.params;
+    const projectRoot = resolveProjectRoot();
+    const cat = getResolvedCats(projectRoot)[id] ?? catRegistry.tryGet(id)?.config;
+
+    if (!cat) {
+      reply.status(404);
+      return { error: 'Cat not found' };
+    }
+
+    ensureCatRegistered(id, cat);
+
+    return {
+      catId: cat.id,
+      displayName: cat.displayName,
+      promptType: 'staticIdentity',
+      prompt: buildStaticIdentity(createCatId(cat.id)),
+    };
   });
 
   // GET /api/cats/:id/status - 获取猫猫状态

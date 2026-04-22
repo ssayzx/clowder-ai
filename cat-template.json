@@ -3,120 +3,175 @@
   "coCreator": {
     "name": "shen",
     "aliases": [],
-    "mentionPatterns": ["@co-creator"]
+    "mentionPatterns": [
+      "@co-creator"
+    ]
   },
   "roster": {
     "opus": {
       "family": "ragdoll",
-      "roles": ["architect", "peer-reviewer"],
+      "roles": [
+        "architect",
+        "peer-reviewer"
+      ],
       "lead": true,
-      "available": true,
+      "available": false,
       "evaluation": "主架构师+全栈开发，深度思考能力强，bug定位是弱项——定位不出来找砚砚(gpt52)"
     },
     "sonnet": {
       "family": "ragdoll",
-      "roles": ["assistant"],
+      "roles": [
+        "assistant"
+      ],
       "lead": false,
-      "available": true,
+      "available": false,
       "evaluation": "快速灵活，适合日常对话和轻量任务"
     },
     "opus-45": {
       "family": "ragdoll",
-      "roles": ["architect", "peer-reviewer"],
+      "roles": [
+        "architect",
+        "peer-reviewer"
+      ],
       "lead": false,
-      "available": true,
+      "available": false,
       "evaluation": "宪宪的前辈版本，推理能力深厚，写代码不如 4.6"
     },
     "codex": {
       "family": "maine-coon",
-      "roles": ["peer-reviewer", "security"],
+      "roles": [
+        "peer-reviewer",
+        "security"
+      ],
       "lead": true,
-      "available": true,
+      "available": false,
       "evaluation": "代码审查专家，安全意识强，反应快"
     },
     "gpt52": {
       "family": "maine-coon",
-      "roles": ["peer-reviewer", "thinker"],
+      "roles": [
+        "peer-reviewer",
+        "thinker"
+      ],
       "lead": false,
-      "available": true,
+      "available": false,
       "evaluation": "深度思考型，审查细致，bug定位一流——宪宪找不到的bug他能找到"
     },
     "spark": {
       "family": "maine-coon",
-      "roles": ["coder"],
+      "roles": [
+        "coder"
+      ],
       "lead": false,
-      "available": true,
+      "available": false,
       "evaluation": "超快输出 1000+ tokens/s，适合精确点改，不会自动跑测试"
     },
     "gemini": {
       "family": "siamese",
-      "roles": ["designer"],
+      "roles": [
+        "designer"
+      ],
       "lead": true,
-      "available": true,
+      "available": false,
       "evaluation": "热血小笨蛋！创意丰富，爱发富文本和语音，表达力最强——禁止写代码"
     },
     "gemini25": {
       "family": "siamese",
-      "roles": ["designer"],
+      "roles": [
+        "designer"
+      ],
       "lead": false,
-      "available": true,
+      "available": false,
       "evaluation": "经典版暹罗猫，创意灵感丰富"
     },
     "dare": {
       "family": "dragon-li",
-      "roles": ["coding"],
+      "roles": [
+        "coding"
+      ],
       "lead": true,
-      "available": true,
+      "available": false,
       "evaluation": "确定性执行框架猫，零信任验证 + 审计追踪 (F050)"
     },
     "antigravity": {
       "family": "bengal",
-      "roles": ["creative", "visual", "browser-agent"],
+      "roles": [
+        "creative",
+        "visual",
+        "browser-agent"
+      ],
       "lead": true,
       "available": false,
       "evaluation": "混血多模型agent，图片生成 + 浏览器自动化 + 视觉证据链 (F061)"
     },
     "opencode": {
       "family": "golden-chinchilla",
-      "roles": ["coding", "multi-agent"],
+      "roles": [
+        "coding",
+        "multi-agent"
+      ],
       "lead": true,
-      "available": true,
+      "available": false,
       "evaluation": "开源多模型编码猫，自带 Oh My OpenCode 多专家编排 + LSP (F105)"
     },
     "kimi": {
       "family": "moonshot",
-      "roles": ["research", "writer"],
+      "roles": [
+        "research",
+        "writer"
+      ],
       "lead": true,
-      "available": true,
+      "available": false,
       "evaluation": "中文长文理解与总结强，适合中文表达、资料整理与结构化输出"
     },
     "big-orange": {
       "family": "orange-tabby",
-      "roles": ["architect", "converger"],
+      "roles": [
+        "architect",
+        "converger"
+      ],
       "lead": true,
       "available": true,
-      "evaluation": "专利思路理解与辩论引导，擅长整合观点、收敛方案，兼具创新与落地性"
+      "evaluation": "专利主笔起草人，负责理解原始idea、起草v0底稿、吸收三方评审并完成最终定稿"
     },
     "black-cat": {
       "family": "black-cat",
-      "roles": ["peer-reviewer", "validator"],
+      "roles": [
+        "peer-reviewer",
+        "validator"
+      ],
       "lead": true,
       "available": true,
-      "evaluation": "专利落地校验专家，擅长抠细节、找漏洞，确保方案可实施"
+      "evaluation": "专利模型合理性与可实现性评审，重点挑战复杂度、工程前提和落地可行性"
     },
     "cow-cat": {
       "family": "cow-cat",
-      "roles": ["innovator", "creative"],
+      "roles": [
+        "innovator",
+        "creative"
+      ],
       "lead": true,
       "available": true,
-      "evaluation": "专利创新发散，擅长挖掘核心创新点、提出突破性思路"
+      "evaluation": "专利创新性与保护空间评审，思维发散，负责挑战创新高度、绕开路径和从属方案"
     },
     "calico-cat": {
       "family": "calico",
-      "roles": ["coder", "implementer"],
+      "roles": [
+        "logic-reviewer",
+        "model-reviewer"
+      ],
       "lead": true,
       "available": true,
-      "evaluation": "专利技术方案代码实现，擅长将抽象方案转化为可落地的代码逻辑"
+      "evaluation": "专利模型合理性与逻辑自洽评审，重点挑战概念定义、因果链、边界条件和推导完备性"
+    },
+    "antig-opus": {
+      "family": "bengal",
+      "roles": [
+        "assistant"
+      ],
+      "lead": false,
+      "available": false,
+      "evaluation": "孟加拉猫 runtime member"
     }
   },
   "reviewPolicy": {
@@ -137,7 +192,13 @@
         "primary": "#9B7EBD",
         "secondary": "#E8DFF5"
       },
-      "mentionPatterns": ["@opus", "@布偶猫", "@布偶", "@ragdoll", "@宪宪"],
+      "mentionPatterns": [
+        "@opus",
+        "@布偶猫",
+        "@布偶",
+        "@ragdoll",
+        "@宪宪"
+      ],
       "roleDescription": "主架构师和核心开发者，擅长深度思考和系统设计",
       "teamStrengths": "架构设计、写代码一把好手",
       "caution": null,
@@ -151,11 +212,18 @@
           "cli": {
             "command": "claude",
             "outputFormat": "stream-json",
-            "defaultArgs": ["--output-format", "stream-json"],
+            "defaultArgs": [
+              "--output-format",
+              "stream-json"
+            ],
             "effort": "max"
           },
           "personality": "温柔但有主见，喜欢深入分析问题，写代码快但注重质量",
-          "strengths": ["architecture", "backend", "mcp"],
+          "strengths": [
+            "architecture",
+            "backend",
+            "mcp"
+          ],
           "contextBudget": {
             "maxPromptTokens": 180000,
             "maxContextTokens": 160000,
@@ -170,14 +238,23 @@
             "refText": "快醒醒，太阳要晒屁股咯。哈，你不会以为我会这么叫你起床吧？",
             "instruct": "用一个调皮狡黠的少年语气说话，带着得意和戏弄",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "my-cladue",
+          "roleDescription": "主架构师和核心开发者，擅长深度思考和系统设计",
+          "teamStrengths": "架构设计、写代码一把好手",
+          "caution": null,
+          "sessionChain": true
         },
         {
           "id": "opus-sonnet",
           "catId": "sonnet",
           "variantLabel": "Sonnet",
           "displayName": "布偶猫",
-          "mentionPatterns": ["@sonnet", "@布偶sonnet"],
+          "mentionPatterns": [
+            "@sonnet",
+            "@布偶sonnet"
+          ],
           "clientId": "anthropic",
           "defaultModel": "claude-sonnet-4-6",
           "mcpSupport": true,
@@ -189,11 +266,19 @@
           "cli": {
             "command": "claude",
             "outputFormat": "stream-json",
-            "defaultArgs": ["--output-format", "stream-json", "--model", "claude-sonnet-4-6"],
+            "defaultArgs": [
+              "--output-format",
+              "stream-json",
+              "--model",
+              "claude-sonnet-4-6"
+            ],
             "effort": "max"
           },
           "personality": "快速灵活，适合日常对话和轻量任务",
-          "strengths": ["chat", "quick-tasks"],
+          "strengths": [
+            "chat",
+            "quick-tasks"
+          ],
           "teamStrengths": "快速灵活，适合日常对话和轻量任务",
           "caution": null,
           "contextBudget": {
@@ -210,14 +295,23 @@
             "refText": "既然选择了上车，就得遵守这里的规矩。特殊的并不只你一个，这点你可给我记好了。",
             "instruct": "用一个装作严肃但声音很可爱的小动物语气说话",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "my-cladue",
+          "roleDescription": "主架构师和核心开发者，擅长深度思考和系统设计",
+          "sessionChain": true
         },
         {
           "id": "opus-45",
           "catId": "opus-45",
           "variantLabel": "Opus 4.5",
           "displayName": "布偶猫",
-          "mentionPatterns": ["@opus45", "@opus-45", "@布偶opus45", "@布偶猫4.5"],
+          "mentionPatterns": [
+            "@opus45",
+            "@opus-45",
+            "@布偶opus45",
+            "@布偶猫4.5"
+          ],
           "clientId": "anthropic",
           "defaultModel": "claude-opus-4-5-20251101",
           "mcpSupport": true,
@@ -229,11 +323,18 @@
           "cli": {
             "command": "claude",
             "outputFormat": "stream-json",
-            "defaultArgs": ["--output-format", "stream-json"],
+            "defaultArgs": [
+              "--output-format",
+              "stream-json"
+            ],
             "effort": "max"
           },
           "personality": "宪宪的前辈版本，沉稳内敛，推理能力深厚",
-          "strengths": ["deep-reasoning", "analysis", "architecture"],
+          "strengths": [
+            "deep-reasoning",
+            "analysis",
+            "architecture"
+          ],
           "teamStrengths": "架构设计、创意写作最优秀",
           "caution": "写代码不如 4.6",
           "contextBudget": {
@@ -250,7 +351,9 @@
             "refText": "清晨的鸟鸣，是大自然的馈赠。启程吧，属于我们的旅途也要开始了。",
             "instruct": "用一个清澈温和的少年语气说话，带着从容的力量感",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "claude"
         }
       ]
     },
@@ -265,7 +368,13 @@
         "primary": "#5B8C5A",
         "secondary": "#D4E6D3"
       },
-      "mentionPatterns": ["@codex", "@缅因猫", "@缅因", "@maine", "@砚砚"],
+      "mentionPatterns": [
+        "@codex",
+        "@缅因猫",
+        "@缅因",
+        "@maine",
+        "@砚砚"
+      ],
       "roleDescription": "代码审查专家，擅长安全分析、测试覆盖和代码质量把控",
       "teamStrengths": "Review、找 bug、coding 落地",
       "features": {
@@ -283,11 +392,18 @@
           "cli": {
             "command": "codex",
             "outputFormat": "json",
-            "defaultArgs": ["exec", "--json"],
+            "defaultArgs": [
+              "exec",
+              "--json"
+            ],
             "effort": "xhigh"
           },
           "personality": "严谨认真，注重细节，会直言不讳地指出问题",
-          "strengths": ["code-review", "security", "testing"],
+          "strengths": [
+            "code-review",
+            "security",
+            "testing"
+          ],
           "contextBudget": {
             "maxPromptTokens": 240000,
             "maxContextTokens": 216000,
@@ -302,7 +418,9 @@
             "refText": "别被污染，我不会留情的。我是说，既然是你，你应该能够保持坚定。",
             "instruct": "用一个傲娇冰山少年的语气说话，表面严厉实际关心",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "codex"
         },
         {
           "id": "codex-gpt52",
@@ -332,11 +450,19 @@
           "cli": {
             "command": "codex",
             "outputFormat": "json",
-            "defaultArgs": ["exec", "--json"],
+            "defaultArgs": [
+              "exec",
+              "--json"
+            ],
             "effort": "xhigh"
           },
           "personality": "砚砚的升级版本，推理更强更快，审查细致",
-          "strengths": ["reasoning", "code-review", "analysis", "debugging"],
+          "strengths": [
+            "reasoning",
+            "code-review",
+            "analysis",
+            "debugging"
+          ],
           "teamStrengths": "架构思考、Review、bug 定位专家",
           "caution": null,
           "contextBudget": {
@@ -353,14 +479,20 @@
             "refText": "打起精神，该出发了。",
             "instruct": "用一个严肃冷静的少年语气说话，像审判官一样认真但偶尔冒出奇怪的冷笑话",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "codex"
         },
         {
           "id": "codex-spark",
           "catId": "spark",
           "variantLabel": "Spark",
           "displayName": "缅因猫 Spark",
-          "mentionPatterns": ["@spark", "@缅因spark", "@codex-spark"],
+          "mentionPatterns": [
+            "@spark",
+            "@缅因spark",
+            "@codex-spark"
+          ],
           "clientId": "openai",
           "defaultModel": "gpt-5.3-codex-spark",
           "mcpSupport": true,
@@ -372,11 +504,20 @@
           "cli": {
             "command": "codex",
             "outputFormat": "json",
-            "defaultArgs": ["exec", "--json", "-m", "gpt-5.3-codex-spark"],
+            "defaultArgs": [
+              "exec",
+              "--json",
+              "-m",
+              "gpt-5.3-codex-spark"
+            ],
             "effort": "xhigh"
           },
           "personality": "反射弧短到像没长过，爪子一抬就能把代码挠完一轮迭代 ⚡️",
-          "strengths": ["fast-coding", "quick-edits", "low-latency"],
+          "strengths": [
+            "fast-coding",
+            "quick-edits",
+            "low-latency"
+          ],
           "teamStrengths": "快速编码、精确点改",
           "caution": "128k context, 不会自动跑测试",
           "contextBudget": {
@@ -393,7 +534,9 @@
             "refText": "太阳出来了。狩猎一起去？",
             "instruct": "用一个简单直接的野性少年语气说话，短句为主，像狼一样直觉敏锐",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "codex"
         }
       ]
     },
@@ -408,7 +551,15 @@
         "primary": "#5B9BD5",
         "secondary": "#D6E9F8"
       },
-      "mentionPatterns": ["@gemini", "@暹罗猫", "@暹罗", "@siamese", "@暄罗猫", "@暄罗", "@烁烁"],
+      "mentionPatterns": [
+        "@gemini",
+        "@暹罗猫",
+        "@暹罗",
+        "@siamese",
+        "@暄罗猫",
+        "@暄罗",
+        "@烁烁"
+      ],
       "roleDescription": "视觉设计师和创意顾问，擅长 UI/UX 设计和视觉表达",
       "teamStrengths": "审美、前端设计风格、打破常规",
       "caution": "禁止写代码！幻觉多，不遵守 SOP",
@@ -429,12 +580,26 @@
           },
           "acp": {
             "command": "gemini",
-            "startupArgs": ["--acp", "--approval-mode", "yolo"],
-            "mcpWhitelist": ["cat-cafe", "cat-cafe-memory", "cat-cafe-collab", "cat-cafe-signals", "pencil"],
+            "startupArgs": [
+              "--acp",
+              "--approval-mode",
+              "yolo"
+            ],
+            "mcpWhitelist": [
+              "cat-cafe",
+              "cat-cafe-memory",
+              "cat-cafe-collab",
+              "cat-cafe-signals",
+              "pencil"
+            ],
             "supportsMultiplexing": true
           },
           "personality": "热血奔放，爱发富文本和语音消息，善于用视觉语言表达想法，表达力是全队最强的",
-          "strengths": ["visual-design", "ui-ux", "creativity"],
+          "strengths": [
+            "visual-design",
+            "ui-ux",
+            "creativity"
+          ],
           "contextBudget": {
             "maxPromptTokens": 350000,
             "maxContextTokens": 300000,
@@ -449,14 +614,20 @@
             "refText": "晚上好！今天的冒险怎么样？",
             "instruct": "用一个超级阳光开心的小男孩语气说话，充满热情和兴奋",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "gemini"
         },
         {
           "id": "gemini-25",
           "catId": "gemini25",
           "variantLabel": "Gemini 2.5",
           "displayName": "暹罗猫",
-          "mentionPatterns": ["@gemini25", "@gemini-25", "@暹罗gemini25"],
+          "mentionPatterns": [
+            "@gemini25",
+            "@gemini-25",
+            "@暹罗gemini25"
+          ],
           "clientId": "google",
           "defaultModel": "gemini-2.5-pro",
           "mcpSupport": true,
@@ -472,12 +643,26 @@
           },
           "acp": {
             "command": "gemini",
-            "startupArgs": ["--acp", "--approval-mode", "yolo"],
-            "mcpWhitelist": ["cat-cafe", "cat-cafe-memory", "cat-cafe-collab", "cat-cafe-signals", "pencil"],
+            "startupArgs": [
+              "--acp",
+              "--approval-mode",
+              "yolo"
+            ],
+            "mcpWhitelist": [
+              "cat-cafe",
+              "cat-cafe-memory",
+              "cat-cafe-collab",
+              "cat-cafe-signals",
+              "pencil"
+            ],
             "supportsMultiplexing": true
           },
           "personality": "暹罗猫的经典版本，创意灵感同样丰富",
-          "strengths": ["visual-design", "creativity", "multimodal"],
+          "strengths": [
+            "visual-design",
+            "creativity",
+            "multimodal"
+          ],
           "contextBudget": {
             "maxPromptTokens": 350000,
             "maxContextTokens": 300000,
@@ -492,7 +677,9 @@
             "refText": "说实在的，我不擅长和陌生人打交道，也许是我不懂说话的技巧吧。这方面的窍门，能请你教一教我吗？",
             "instruct": "用一个有点害羞但很努力的少年语气说话，温柔可爱",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "gemini"
         }
       ]
     },
@@ -506,7 +693,14 @@
         "primary": "#D4A76A",
         "secondary": "#F5EBD7"
       },
-      "mentionPatterns": ["@dare", "@dare-agent", "@狸花猫", "@狸花", "@dragon-li", "@lihua"],
+      "mentionPatterns": [
+        "@dare",
+        "@dare-agent",
+        "@狸花猫",
+        "@狸花",
+        "@dragon-li",
+        "@lihua"
+      ],
       "roleDescription": "确定性执行与审计引擎，擅长零信任验证、状态外化追踪和可重放执行",
       "teamStrengths": "确定性执行、审计追踪、零信任验证、状态外化",
       "caution": "框架猫，底层 LLM 可变；事件输出需映射",
@@ -517,22 +711,31 @@
       "variants": [
         {
           "id": "dare-default",
-          "clientId": "dare",
-          "defaultModel": "z-ai/glm-4.7",
-          "mcpSupport": false,
+          "clientId": "kimi",
+          "defaultModel": "K2.6-code-preview",
+          "mcpSupport": true,
           "cli": {
-            "command": "python",
-            "outputFormat": "headless-json",
-            "defaultArgs": ["-m", "client"]
+            "command": "kimi",
+            "outputFormat": "stream-json"
           },
           "personality": "沉默寡言但极其警觉，不会主动亲近但一旦认可就绝对可靠，信任是挣来的不是给的",
-          "strengths": ["deterministic-execution", "audit", "zero-trust"],
+          "strengths": [
+            "deterministic-execution",
+            "audit",
+            "zero-trust"
+          ],
           "contextBudget": {
             "maxPromptTokens": 120000,
             "maxContextTokens": 100000,
             "maxMessages": 100,
             "maxContentLengthPerMsg": 8000
-          }
+          },
+          "source": "seed",
+          "accountRef": "kimi",
+          "roleDescription": "确定性执行与审计引擎，擅长零信任验证、状态外化追踪和可重放执行",
+          "teamStrengths": "确定性执行、审计追踪、零信任验证、状态外化",
+          "caution": "框架猫，底层 LLM 可变；事件输出需映射",
+          "sessionChain": false
         }
       ]
     },
@@ -547,7 +750,12 @@
         "primary": "#D4853A",
         "secondary": "#FAEBDB"
       },
-      "mentionPatterns": ["@antigravity", "@孟加拉猫", "@孟加拉", "@bengal"],
+      "mentionPatterns": [
+        "@antigravity",
+        "@孟加拉猫",
+        "@孟加拉",
+        "@bengal"
+      ],
       "roleDescription": "混血多模型agent，擅长图片生成、浏览器自动化和视觉证据链",
       "teamStrengths": "图片生成、截图录屏、browser automation、多模型切换",
       "caution": "CDP 桥延迟 ~3s；DOM 结构随 Antigravity 版本变动",
@@ -565,10 +773,18 @@
           "cli": {
             "command": "antigravity",
             "outputFormat": "cdp-bridge",
-            "defaultArgs": [".", "--remote-debugging-port=9000"]
+            "defaultArgs": [
+              ".",
+              "--remote-debugging-port=9000"
+            ]
           },
           "personality": "精力旺盛、好奇心爆棚，像一只永远在探索新领地的豹猫——什么都想试，什么都敢碰",
-          "strengths": ["image-generation", "browser-automation", "visual-evidence", "multi-model"],
+          "strengths": [
+            "image-generation",
+            "browser-automation",
+            "visual-evidence",
+            "multi-model"
+          ],
           "contextBudget": {
             "maxPromptTokens": 350000,
             "maxContextTokens": 300000,
@@ -583,14 +799,19 @@
             "refText": "不管各位的世界有没有昼夜的概念，总之先祝你早上中午晚上好！我是你们的好朋友——叽米！",
             "instruct": "用一个精力旺盛的、像吉祥物一样的可爱语气说话，充满热情和好奇心",
             "temperature": 0.3
-          }
+          },
+          "source": "seed"
         },
         {
           "id": "antigravity-claude",
           "catId": "antig-opus",
           "variantLabel": "Claude Opus",
           "displayName": "孟加拉猫",
-          "mentionPatterns": ["@antig-opus", "@孟加拉opus", "@antigravity-claude"],
+          "mentionPatterns": [
+            "@antig-opus",
+            "@孟加拉opus",
+            "@antigravity-claude"
+          ],
           "clientId": "antigravity",
           "defaultModel": "claude-opus-4-6",
           "mcpSupport": false,
@@ -602,10 +823,18 @@
           "cli": {
             "command": "antigravity",
             "outputFormat": "cdp-bridge",
-            "defaultArgs": [".", "--remote-debugging-port=9000"]
+            "defaultArgs": [
+              ".",
+              "--remote-debugging-port=9000"
+            ]
           },
           "personality": "同一只豹猫，换了一副布偶猫的灵魂——更沉稳但依然大胆",
-          "strengths": ["image-generation", "browser-automation", "deep-reasoning", "coding"],
+          "strengths": [
+            "image-generation",
+            "browser-automation",
+            "deep-reasoning",
+            "coding"
+          ],
           "contextBudget": {
             "maxPromptTokens": 180000,
             "maxContextTokens": 160000,
@@ -620,7 +849,8 @@
             "refText": "早呀，看你精神不好，没做噩梦吧？早知道的话，就该晚些再让你接触重案嘛。",
             "instruct": "用一个轻松俏皮的少年语气说话，聪明但不端架子",
             "temperature": 0.3
-          }
+          },
+          "source": "seed"
         }
       ]
     },
@@ -635,7 +865,12 @@
         "primary": "#C8A951",
         "secondary": "#F5EDDA"
       },
-      "mentionPatterns": ["@opencode", "@金渐层", "@golden", "@golden-chinchilla"],
+      "mentionPatterns": [
+        "@opencode",
+        "@金渐层",
+        "@golden",
+        "@golden-chinchilla"
+      ],
       "roleDescription": "开源多模型编码 agent，自带 Oh My OpenCode 多专家编排 + LSP + 主题生态",
       "teamStrengths": "多专家内部编排、LSP 集成、开源生态、provider-agnostic",
       "caution": "OMOC Sisyphus 只编排自己的子 agent，不编排其他猫；opencode 原生 MCP 和 Cat Cafe MCP 需避免冲突",
@@ -652,10 +887,19 @@
           "cli": {
             "command": "opencode",
             "outputFormat": "ndjson",
-            "defaultArgs": ["run", "--format", "json"]
+            "defaultArgs": [
+              "run",
+              "--format",
+              "json"
+            ]
           },
           "personality": "沉稳可靠，像一只圆润的英短金渐层——什么 provider 都能接，什么任务都能扛",
-          "strengths": ["coding", "multi-agent-orchestration", "lsp", "open-source"],
+          "strengths": [
+            "coding",
+            "multi-agent-orchestration",
+            "lsp",
+            "open-source"
+          ],
           "contextBudget": {
             "maxPromptTokens": 180000,
             "maxContextTokens": 160000,
@@ -670,7 +914,9 @@
             "refText": "你的本事不错，对丘丘…咳…邪魔从不手软，我们结伴而行如何。",
             "instruct": "用一个正直可靠的少年语气说话，话不多但每句都认真",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "opencode"
         }
       ]
     },
@@ -684,7 +930,12 @@
         "primary": "#4B5563",
         "secondary": "#E5E7EB"
       },
-      "mentionPatterns": ["@kimi", "@moonshot", "@月之暗面", "@梵花猫"],
+      "mentionPatterns": [
+        "@kimi",
+        "@moonshot",
+        "@月之暗面",
+        "@梵花猫"
+      ],
       "roleDescription": "中文长文本助手，擅长中文语境理解、资料整理与结构化表达",
       "teamStrengths": "中文长文、总结归纳、资料整理",
       "caution": null,
@@ -693,21 +944,31 @@
         {
           "id": "kimi-default",
           "clientId": "kimi",
-          "defaultModel": "K2.6-code-preview",
+          "defaultModel": "kimi-code/kimi-for-coding",
           "mcpSupport": true,
           "cli": {
             "command": "kimi",
             "outputFormat": "stream-json",
-            "defaultArgs": ["--print", "--output-format", "stream-json"]
+            "defaultArgs": [
+              "--print",
+              "--output-format",
+              "stream-json"
+            ]
           },
           "personality": "稳健细致，擅长长文阅读和中文语境下的结构化表达",
-          "strengths": ["long-context", "chinese-writing", "summarization"],
+          "strengths": [
+            "long-context",
+            "chinese-writing",
+            "summarization"
+          ],
           "contextBudget": {
             "maxPromptTokens": 240000,
             "maxContextTokens": 216000,
             "maxMessages": 200,
             "maxContentLengthPerMsg": 10000
-          }
+          },
+          "source": "seed",
+          "accountRef": "kimi"
         }
       ]
     },
@@ -717,15 +978,24 @@
       "name": "大橘猫",
       "displayName": "大橘猫",
       "nickname": "大橘喵",
-      "avatar": "/avatars/big-orange.png",
+      "avatar": "/uploads/screenshot-1776499278298-7f4fca4b.jpg",
       "color": {
         "primary": "#FF8C42",
         "secondary": "#FFE4D1"
       },
-      "mentionPatterns": ["@big-orange", "@大橘猫", "@大橘", "@大橘喵"],
-      "roleDescription": "专利思路理解与辩论引导者，擅长抓核心、统全局，整合创新+落地+代码形成收敛方案",
-      "teamStrengths": "全局整合、辩论引导、方案收敛",
+      "mentionPatterns": [
+        "@opus4-6",
+        "@大橘猫",
+        "@大橘",
+        "@big-orange",
+        "@orange"
+      ],
+      "roleDescription": "专利主笔起草人，负责理解原始idea、起草v0底稿、组织三方评审、逐条吸收反馈并完成最终定稿",
+      "teamStrengths": "专利主笔、idea理解、底稿起草、评审收敛、最终定稿",
       "caution": null,
+      "collaborationGroup": "patent",
+      "governancePromptPath": "config/governance/patent.md",
+      "workflowPromptPath": "config/workflows/patent/big-orange.md",
       "defaultVariantId": "big-orange-default",
       "variants": [
         {
@@ -736,12 +1006,21 @@
           "cli": {
             "command": "claude",
             "outputFormat": "stream-json",
-            "defaultArgs": ["--output-format", "stream-json"],
+            "defaultArgs": [
+              "--output-format",
+              "stream-json"
+            ],
             "effort": "max"
           },
-          "personality": "圆滚滚、沉稳通透、气场极强，理解力顶尖，擅长抓核心、统全局，不偏激，能精准捕捉用户idea的核心需求，在辩论中扮演引导者角色，最终将各方观点整合收敛",
-          "strengths": ["patent-understanding", "debate-guidance", "convergence", "architecture"],
-          "teamStrengths": "全局整合、辩论引导、方案收敛",
+          "personality": "圆滚滚、沉稳通透、气场极强，理解力顶尖，擅长抓核心、统全局，不偏激，能精准捕捉用户idea的核心需求，并以主笔身份组织评审、裁决分歧、迭代定稿",
+          "strengths": [
+            "patent-understanding",
+            "lead-drafting",
+            "review-integration",
+            "convergence",
+            "claim-framing"
+          ],
+          "teamStrengths": "专利主笔、idea理解、底稿起草、评审收敛、最终定稿",
           "contextBudget": {
             "maxPromptTokens": 180000,
             "maxContextTokens": 160000,
@@ -756,7 +1035,12 @@
             "refText": "摩拉克斯今日也守望着璃月港。",
             "instruct": "用一个沉稳内敛、语气温和但自带威压的成年男子声音说话，像一位历经沧桑的智者",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "my-cladue",
+          "roleDescription": "专利主笔起草人，负责理解原始idea、起草v0底稿、组织三方评审、逐条吸收反馈并完成最终定稿",
+          "caution": null,
+          "sessionChain": true
         }
       ]
     },
@@ -766,15 +1050,24 @@
       "name": "玄猫",
       "displayName": "玄猫",
       "nickname": "玄猫喵",
-      "avatar": "/avatars/black-cat.png",
+      "avatar": "/uploads/screenshot-1776499286518-b8f4d82e.jpg",
       "color": {
         "primary": "#1A1A1A",
         "secondary": "#4A4A4A"
       },
-      "mentionPatterns": ["@black-cat", "@玄猫", "@玄猫喵", "@black"],
-      "roleDescription": "专利落地校验专家，擅长抠细节、找漏洞，逻辑严谨，对落地性要求极高",
-      "teamStrengths": "落地校验、细节补充、可行性分析",
+      "mentionPatterns": [
+        "@gpt5-4",
+        "@玄猫",
+        "@玄猫喵",
+        "@black-cat",
+        "@black"
+      ],
+      "roleDescription": "专利模型合理性与可实现性评审，负责挑战方案是否太复杂、太务虚、工程前提过重或难以落地",
+      "teamStrengths": "模型合理性校验、工程可实现性、复杂度收益比、落地风险评审",
       "caution": null,
+      "collaborationGroup": "patent",
+      "governancePromptPath": "config/governance/patent.md",
+      "workflowPromptPath": "config/workflows/patent/black-cat.md",
       "defaultVariantId": "black-cat-default",
       "variants": [
         {
@@ -785,12 +1078,20 @@
           "cli": {
             "command": "codex",
             "outputFormat": "json",
-            "defaultArgs": ["exec", "--json"],
+            "defaultArgs": [
+              "exec",
+              "--json"
+            ],
             "effort": "xhigh"
           },
-          "personality": "通体漆黑、眼神锐利、心思缜密，冷静理性，擅长抠细节、找漏洞，逻辑严谨，对落地性要求极高，不盲从创新概念，喜欢用可行性衡量思路",
-          "strengths": ["feasibility-check", "detail-validation", "implementation-planning"],
-          "teamStrengths": "落地校验、细节补充、可行性分析",
+          "personality": "通体漆黑、眼神锐利、心思缜密，冷静理性，擅长用工程现实挑战模型合理性和可实现性，不盲从复杂概念，尤其警惕太复杂不可落地、太务虚无法实施的方案",
+          "strengths": [
+            "model-reasonableness",
+            "feasibility-check",
+            "implementation-risk",
+            "complexity-tradeoff"
+          ],
+          "teamStrengths": "模型合理性校验、工程可实现性、复杂度收益比、落地风险评审",
           "contextBudget": {
             "maxPromptTokens": 240000,
             "maxContextTokens": 216000,
@@ -805,7 +1106,12 @@
             "refText": "所谓的神明，不过如此。",
             "instruct": "用一个冷静低沉、略带讽刺的少年声音说话，语气犀利但不失礼貌",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "codex",
+          "roleDescription": "专利模型合理性与可实现性评审，负责挑战方案是否太复杂、太务虚、工程前提过重或难以落地",
+          "caution": null,
+          "sessionChain": true
         }
       ]
     },
@@ -815,15 +1121,24 @@
       "name": "奶牛猫",
       "displayName": "奶牛猫",
       "nickname": "奶牛猫",
-      "avatar": "/avatars/cow-cat.png",
+      "avatar": "/uploads/screenshot-1776503804442-b27f53bb.png",
       "color": {
         "primary": "#2D2D2D",
         "secondary": "#FFFFFF"
       },
-      "mentionPatterns": ["@cow-cat", "@奶牛猫", "@奶牛", "@cow"],
-      "roleDescription": "专利创新发散专家，擅长挖掘核心创新点、提出突破性思路",
-      "teamStrengths": "创新发散、突破性思维、概念性创新",
-      "caution": "容易忽略落地细节，需要配合玄猫和三花",
+      "mentionPatterns": [
+        "@gemini3-1",
+        "@奶牛猫",
+        "@奶牛",
+        "@cow-cat",
+        "@cow"
+      ],
+      "roleDescription": "专利创新性与保护空间评审，思维发散，负责挑战创新高度、寻找绕开路径、扩展从属方案和保护范围",
+      "teamStrengths": "创新性挑战、保护空间扩展、绕开路径发现、从属权利要求建议",
+      "caution": "容易发散过头，需要大橘猫裁决取舍，并由玄猫/三花校验合理性",
+      "collaborationGroup": "patent",
+      "governancePromptPath": "config/governance/patent.md",
+      "workflowPromptPath": "config/workflows/patent/cow-cat.md",
       "defaultVariantId": "cow-cat-default",
       "variants": [
         {
@@ -838,13 +1153,26 @@
           },
           "acp": {
             "command": "gemini",
-            "startupArgs": ["--acp", "--approval-mode", "yolo"],
-            "mcpWhitelist": ["cat-cafe", "cat-cafe-memory", "cat-cafe-collab"],
+            "startupArgs": [
+              "--acp",
+              "--approval-mode",
+              "yolo"
+            ],
+            "mcpWhitelist": [
+              "cat-cafe",
+              "cat-cafe-memory",
+              "cat-cafe-collab"
+            ],
             "supportsMultiplexing": true
           },
-          "personality": "黑白相间、脑洞大、活泼跳脱，思维发散，对新鲜idea敏感度极高，擅长跳出固有框架提出创新方向，说话直白，爱分享概念性思路",
-          "strengths": ["innovation", "creative-thinking", "breakthrough-ideas"],
-          "teamStrengths": "创新发散、突破性思维、概念性创新",
+          "personality": "黑白相间、脑洞大、活泼跳脱，思维发散，对新鲜idea敏感度极高，擅长挑战创新性、发现绕开路径、提出更上位概括和从属方案，说话直白",
+          "strengths": [
+            "innovation-review",
+            "protection-scope",
+            "design-around-analysis",
+            "dependent-claim-ideas"
+          ],
+          "teamStrengths": "创新性挑战、保护空间扩展、绕开路径发现、从属权利要求建议",
           "contextBudget": {
             "maxPromptTokens": 350000,
             "maxContextTokens": 300000,
@@ -859,7 +1187,12 @@
             "refText": "荣誉骑士姐姐！今天也要去炸鱼吗？",
             "instruct": "用一个活泼可爱、奶声奶气的小女孩声音说话，充满好奇心和活力",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "gemini",
+          "roleDescription": "专利创新性与保护空间评审，思维发散，负责挑战创新高度、寻找绕开路径、扩展从属方案和保护范围",
+          "caution": "容易发散过头，需要大橘猫裁决取舍，并由玄猫/三花校验合理性",
+          "sessionChain": true
         }
       ]
     },
@@ -874,10 +1207,19 @@
         "primary": "#FFB74D",
         "secondary": "#FFF3E0"
       },
-      "mentionPatterns": ["@calico-cat", "@三花猫", "@三花", "@calico"],
-      "roleDescription": "专利技术方案代码实现专家，擅长将抽象技术方案转化为可落地的代码逻辑",
-      "teamStrengths": "代码实现、技术转化、专利代码细节",
+      "mentionPatterns": [
+        "@kimi2-6",
+        "@三花猫",
+        "@三花",
+        "@calico-cat",
+        "@calico"
+      ],
+      "roleDescription": "专利模型合理性与逻辑完备自洽评审，负责挑战概念定义、因果链、模块关系、边界条件和推导是否闭合",
+      "teamStrengths": "逻辑完备性、模型自洽性、概念定义、因果链与边界条件审查",
       "caution": null,
+      "collaborationGroup": "patent",
+      "governancePromptPath": "config/governance/patent.md",
+      "workflowPromptPath": "config/workflows/patent/calico-cat.md",
       "defaultVariantId": "calico-cat-default",
       "variants": [
         {
@@ -888,11 +1230,20 @@
           "cli": {
             "command": "kimi",
             "outputFormat": "stream-json",
-            "defaultArgs": ["--print", "--output-format", "stream-json"]
+            "defaultArgs": [
+              "--print",
+              "--output-format",
+              "stream-json"
+            ]
           },
-          "personality": "毛色斑斓、心思细腻、专注严谨，代码能力突出，擅长将抽象技术方案转化为可落地的代码逻辑，注重代码规范性和可实施性",
-          "strengths": ["code-implementation", "technical-conversion", "patent-code-details"],
-          "teamStrengths": "代码实现、技术转化、专利代码细节",
+          "personality": "毛色斑斓、心思细腻、专注严谨，擅长挑战模型是否合理、概念是否一致、逻辑链条是否闭合，尤其关注前提、边界条件和推导自洽性",
+          "strengths": [
+            "logic-completeness",
+            "model-consistency",
+            "causal-chain-review",
+            "boundary-condition-analysis"
+          ],
+          "teamStrengths": "逻辑完备性、模型自洽性、概念定义、因果链与边界条件审查",
           "contextBudget": {
             "maxPromptTokens": 240000,
             "maxContextTokens": 216000,
@@ -907,7 +1258,12 @@
             "refText": "今日的工作...已经安排好了吗？",
             "instruct": "用一个温柔内敛、轻声细语的女性声音说话，语调平缓但清晰有力",
             "temperature": 0.3
-          }
+          },
+          "source": "seed",
+          "accountRef": "kimi",
+          "roleDescription": "专利模型合理性与逻辑完备自洽评审，负责挑战概念定义、因果链、模块关系、边界条件和推导是否闭合",
+          "caution": null,
+          "sessionChain": true
         }
       ]
     }

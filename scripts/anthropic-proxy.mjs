@@ -370,7 +370,7 @@ const server = createServer(async (req, res) => {
     try {
       const parsed = JSON.parse(body.toString('utf-8'));
       console.log(
-        `[proxy #${reqId}] model=${parsed.model}, stream=${parsed.stream}, thinking=${JSON.stringify(parsed.thinking)}`,
+        `[proxy #${reqId}] model=${parsed.model}, stream=${parsed.stream}, max_tokens=${parsed.max_tokens}, thinking=${JSON.stringify(parsed.thinking)}`,
       );
     } catch {
       /* not JSON */

@@ -21,6 +21,8 @@ export function transformClaudeEvent(
     lastTurnInputTokens: number | undefined;
     /** F045: Accumulate thinking_delta chunks until content_block_stop */
     thinkingBuffer: string;
+    /** Last provider stop reason observed from message_delta. */
+    stopReason?: string | undefined;
   },
 ): AgentMessage | AgentMessage[] | null {
   if (typeof event !== 'object' || event === null) return null;
@@ -41,6 +43,7 @@ export function transformClaudeEvent(
       // F24-fix: Reset per-turn tracker on every message_start to prevent
       // stale carryover when the final turn's message_start lacks usage.
       streamState.lastTurnInputTokens = undefined;
+      streamState.stopReason = undefined;
       // Extract per-call input tokens from message_start.usage
       // Anthropic API: input_tokens = new only, cache_read/create are subsets
       // Total context fill = input_tokens + cache_read + cache_creation
@@ -62,8 +65,12 @@ export function transformClaudeEvent(
     // include the real value in message_delta.usage. If lastTurnInputTokens
     // is still unset, pick it up from the delta event.
     if (s.type === 'message_delta') {
+      const delta = s.delta as Record<string, unknown> | undefined;
+      if (typeof delta?.stop_reason === 'string') {
+        streamState.stopReason = delta.stop_reason;
+      }
       if (streamState.lastTurnInputTokens == null) {
-        const deltaUsage = (s.usage ?? (s.delta as Record<string, unknown> | undefined)?.usage) as
+        const deltaUsage = (s.usage ?? delta?.usage) as
           | Record<string, unknown>
           | undefined;
         if (deltaUsage) {

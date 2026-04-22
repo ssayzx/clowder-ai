@@ -268,6 +268,7 @@ export class ClaudeAgentService implements AgentService {
       currentMessageId: undefined as string | undefined,
       lastTurnInputTokens: undefined as number | undefined,
       thinkingBuffer: '' as string,
+      stopReason: undefined as string | undefined,
     };
 
     try {
@@ -409,6 +410,9 @@ export class ClaudeAgentService implements AgentService {
           if (streamState.lastTurnInputTokens != null && metadata.usage) {
             metadata.usage.lastTurnInputTokens = streamState.lastTurnInputTokens;
           }
+          if (streamState.stopReason && metadata.usage) {
+            metadata.usage.stopReason = streamState.stopReason;
+          }
         }
 
         const fromResultError = isResultErrorEvent(event);
@@ -454,6 +458,23 @@ export class ClaudeAgentService implements AgentService {
           { catId: this.catId, totalEvents: eventCount },
           'Claude CLI produced 0 text events — will show as silent_completion',
         );
+      }
+      if (metadata.usage?.stopReason === 'max_tokens') {
+        yield {
+          type: 'system_info' as const,
+          catId: this.catId,
+          content: JSON.stringify({
+            type: 'provider_stop_reason',
+            catId: this.catId,
+            provider: metadata.provider,
+            model: metadata.model,
+            stopReason: metadata.usage.stopReason,
+            outputTokens: metadata.usage.outputTokens,
+            message: 'Claude stopped because the provider output token limit was reached.',
+          }),
+          metadata,
+          timestamp: Date.now(),
+        };
       }
       yield { type: 'done', catId: this.catId, metadata, timestamp: Date.now() };
     } catch (err) {

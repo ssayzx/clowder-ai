@@ -16,6 +16,7 @@ function makeStreamState() {
     partialTextMessageIds: new Set(),
     lastTurnInputTokens: undefined,
     thinkingBuffer: '',
+    stopReason: undefined,
   };
 }
 
@@ -47,6 +48,20 @@ test('stream_event text_delta → text', () => {
   assert.ok(!Array.isArray(result));
   assert.equal(result.type, 'text');
   assert.equal(result.content, 'hello');
+});
+
+test('stream_event message_delta records stop_reason', () => {
+  const state = makeStreamState();
+  const event = {
+    type: 'stream_event',
+    event: {
+      type: 'message_delta',
+      delta: { stop_reason: 'max_tokens' },
+    },
+  };
+  const result = transformClaudeEvent(event, CAT, state);
+  assert.equal(result, null);
+  assert.equal(state.stopReason, 'max_tokens');
 });
 
 test('assistant tool_use → tool_use', () => {

@@ -5,7 +5,7 @@
  */
 
 import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type {
   CatBreed,
@@ -97,6 +97,11 @@ const catVariantSchema = z.object({
     .optional(),
   teamStrengths: z.string().optional(), // F-Ground-3: human-readable strengths
   caution: z.string().nullable().optional(), // F-Ground-3: null = explicit no-caution (R1 fix)
+  workflowPrompt: z.string().min(1).optional(),
+  workflowPromptPath: z.string().min(1).optional(),
+  collaborationGroup: z.string().min(1).optional(),
+  governancePrompt: z.string().min(1).optional(),
+  governancePromptPath: z.string().min(1).optional(),
 });
 
 /** F33 Phase 2: session strategy config (matches SessionStrategyConfig from shared).
@@ -160,6 +165,11 @@ const catBreedSchema = z.object({
   features: catFeaturesSchema,
   teamStrengths: z.string().optional(), // F-Ground-3: breed-level default
   caution: z.string().nullable().optional(), // F-Ground-3: null = explicit no-caution (R1 fix)
+  workflowPrompt: z.string().min(1).optional(),
+  workflowPromptPath: z.string().min(1).optional(),
+  collaborationGroup: z.string().min(1).optional(),
+  governancePrompt: z.string().min(1).optional(),
+  governancePromptPath: z.string().min(1).optional(),
 });
 
 // ── F032: Roster schema for collaboration rules ──────────────────────
@@ -221,7 +231,6 @@ const catCafeConfigSchemaV2 = z
 /** Union of all versions — loader handles migration */
 const catCafeConfigSchema = z.union([catCafeConfigSchemaV1, catCafeConfigSchemaV2]);
 
-/** F340: Read cat-template.json directly — cat-config.json is no longer a runtime source. */
 function readTemplate(templatePath: string): string {
   try {
     return readFileSync(templatePath, 'utf-8');
@@ -229,6 +238,49 @@ function readTemplate(templatePath: string): string {
     const code = (err as NodeJS.ErrnoException).code;
     throw new Error(`Failed to read cat-template.json at ${templatePath}: ${code ?? 'unknown error'}`);
   }
+}
+
+function readPromptFile(baseDir: string, promptPath: string, kind: 'workflow' | 'governance'): string {
+  const resolvedPath = resolve(baseDir, promptPath);
+  try {
+    return readFileSync(resolvedPath, 'utf-8').trim();
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    throw new Error(`Failed to read ${kind} prompt at ${resolvedPath}: ${code ?? 'unknown error'}`);
+  }
+}
+
+function resolvePromptFiles(config: CatCafeConfig, baseDir: string): CatCafeConfig {
+  for (const breed of config.breeds) {
+    const breedRecord = breed as CatBreed & {
+      workflowPrompt?: string;
+      workflowPromptPath?: string;
+      governancePrompt?: string;
+      governancePromptPath?: string;
+    };
+    if (breedRecord.workflowPromptPath && !breedRecord.workflowPrompt) {
+      breedRecord.workflowPrompt = readPromptFile(baseDir, breedRecord.workflowPromptPath, 'workflow');
+    }
+    if (breedRecord.governancePromptPath && !breedRecord.governancePrompt) {
+      breedRecord.governancePrompt = readPromptFile(baseDir, breedRecord.governancePromptPath, 'governance');
+    }
+
+    for (const variant of breed.variants) {
+      const variantRecord = variant as CatVariant & {
+        workflowPrompt?: string;
+        workflowPromptPath?: string;
+        governancePrompt?: string;
+        governancePromptPath?: string;
+      };
+      if (variantRecord.workflowPromptPath && !variantRecord.workflowPrompt) {
+        variantRecord.workflowPrompt = readPromptFile(baseDir, variantRecord.workflowPromptPath, 'workflow');
+      }
+      if (variantRecord.governancePromptPath && !variantRecord.governancePrompt) {
+        variantRecord.governancePrompt = readPromptFile(baseDir, variantRecord.governancePromptPath, 'governance');
+      }
+    }
+  }
+  return config;
 }
 
 /**
@@ -303,9 +355,12 @@ function mergeById(base: HasId[], overlay: HasId[]): HasId[] {
 export function loadCatConfig(filePath?: string): CatCafeConfig {
   let raw: string;
   let resolvedPath = filePath;
+  let workflowBaseDir: string;
   if (filePath) {
     try {
       raw = readFileSync(filePath, 'utf-8');
+      const fileDir = dirname(filePath);
+      workflowBaseDir = basename(fileDir) === '.cat-cafe' ? dirname(fileDir) : fileDir;
     } catch (err) {
       const code = (err as NodeJS.ErrnoException).code;
       throw new Error(`Failed to read cat config at ${filePath}: ${code ?? 'unknown error'}`);
@@ -313,6 +368,7 @@ export function loadCatConfig(filePath?: string): CatCafeConfig {
   } else {
     const templatePath = process.env.CAT_TEMPLATE_PATH ?? DEFAULT_CAT_TEMPLATE_PATH;
     const projectRoot = dirname(templatePath);
+    workflowBaseDir = projectRoot;
     const catalogRaw = readCatCatalogRaw(projectRoot);
     if (catalogRaw !== null) {
       // Catalog exists — use template as base, catalog as overlay
@@ -354,7 +410,7 @@ export function loadCatConfig(filePath?: string): CatCafeConfig {
   // Zod output has mutable arrays + plain string catId;
   // CatCafeConfig has readonly arrays + branded CatId.
   // The shapes match at runtime after validation.
-  return result.data as unknown as CatCafeConfig;
+  return resolvePromptFiles(result.data as unknown as CatCafeConfig, workflowBaseDir);
 }
 
 export function bootstrapDefaultCatCatalog(templatePath?: string): CatCafeConfig {
@@ -406,6 +462,9 @@ export function toAllCatConfigs(config: CatCafeConfig): Record<string, CatConfig
       }
 
       const teamStrengths = variant.teamStrengths ?? breed.teamStrengths;
+      const workflowPrompt = variant.workflowPrompt ?? breed.workflowPrompt;
+      const collaborationGroup = variant.collaborationGroup ?? breed.collaborationGroup;
+      const governancePrompt = variant.governancePrompt ?? breed.governancePrompt;
       // R1 fix: null = "explicitly no caution" (don't inherit breed).
       // undefined (omitted) = inherit from breed. ?? treats null as nullish, so use !== undefined.
       const caution = variant.caution !== undefined ? variant.caution : breed.caution;
@@ -442,6 +501,9 @@ export function toAllCatConfigs(config: CatCafeConfig): Record<string, CatConfig
         ...(variant.variantLabel != null ? { variantLabel: variant.variantLabel } : {}),
         isDefaultVariant: isDefault,
         ...(teamStrengths != null ? { teamStrengths } : {}),
+        ...(workflowPrompt != null ? { workflowPrompt } : {}),
+        ...(collaborationGroup != null ? { collaborationGroup } : {}),
+        ...(governancePrompt != null ? { governancePrompt } : {}),
         // R1 fix: preserve null (explicit no-caution) in CatConfig; only omit if undefined
         ...(caution !== undefined ? { caution } : {}),
         ...(variant.strengths != null ? { strengths: variant.strengths } : {}),

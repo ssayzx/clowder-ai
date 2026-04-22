@@ -25,7 +25,7 @@ import {
 import { AccountSection, IdentitySection, RoutingSection } from './hub-cat-editor.sections';
 import { AdvancedRuntimeSection } from './hub-cat-editor-advanced';
 import { ensureBuiltinAccounts } from './hub-accounts.view';
-import { PersistenceBanner } from './hub-cat-editor-fields';
+import { PersistenceBanner, SectionCard } from './hub-cat-editor-fields';
 import type { CatStrategyEntry } from './hub-strategy-types';
 import { useConfirm } from './useConfirm';
 
@@ -50,6 +50,10 @@ export function HubCatEditor({ cat, draft, open, onClose, onSaved }: HubCatEdito
   const [saving, setSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [loadingPreview, setLoadingPreview] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [previewPrompt, setPreviewPrompt] = useState<string | null>(null);
   const [form, setForm] = useState<HubCatEditorFormState>(() => initialState(cat, draft));
   const [strategyForm, setStrategyForm] = useState<StrategyFormState | null>(null);
   const [strategyBaseline, setStrategyBaseline] = useState<StrategyFormState | null>(null);
@@ -79,6 +83,10 @@ export function HubCatEditor({ cat, draft, open, onClose, onSaved }: HubCatEdito
     setStrategyBaselineHasOverride(false);
     setCodexSettingsBaseline(null);
     setHasUnsavedChanges(false);
+    setPreviewOpen(false);
+    setLoadingPreview(false);
+    setPreviewError(null);
+    setPreviewPrompt(null);
   }, [open, cat, draft]);
 
   // Re-fetch profiles when Provider Profiles page creates/saves/deletes an account.
@@ -258,6 +266,29 @@ export function HubCatEditor({ cat, draft, open, onClose, onSaved }: HubCatEdito
       ...(prev ?? toCodexRuntimeSettings()),
       ...patch,
     }));
+  };
+
+  const loadPromptPreview = async () => {
+    if (!cat) return;
+    setLoadingPreview(true);
+    setPreviewError(null);
+    try {
+      const res = await apiFetch(`/api/cats/${cat.id}/prompt-preview`);
+      if (!res.ok) {
+        const payload = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+        setPreviewError((payload.error as string) ?? `系统提示词加载失败 (${res.status})`);
+        setPreviewPrompt(null);
+        return;
+      }
+      const payload = (await res.json()) as { prompt?: string };
+      setPreviewPrompt(typeof payload.prompt === 'string' ? payload.prompt : '');
+      setPreviewOpen(true);
+    } catch (err) {
+      setPreviewError(err instanceof Error ? err.message : '系统提示词加载失败');
+      setPreviewPrompt(null);
+    } finally {
+      setLoadingPreview(false);
+    }
   };
 
   const requestClose = async () => {
@@ -549,6 +580,48 @@ export function HubCatEditor({ cat, draft, open, onClose, onSaved }: HubCatEdito
             onStrategyChange={patchStrategy}
             onCodexChange={patchCodex}
           />
+          {cat ? (
+            <SectionCard title="系统提示词" description="查看当前构建后的静态系统提示词。">
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (previewOpen) {
+                        setPreviewOpen(false);
+                        return;
+                      }
+                      if (previewPrompt !== null) {
+                        setPreviewOpen(true);
+                        return;
+                      }
+                      void loadPromptPreview();
+                    }}
+                    disabled={loadingPreview}
+                    className="rounded-[8px] bg-[#F7F3F0] px-3.5 py-2 text-sm font-semibold text-[#6B5B51] transition hover:bg-[#F0E7DF] disabled:opacity-50"
+                  >
+                    {loadingPreview ? '加载中…' : previewOpen ? '收起预览' : previewPrompt !== null ? '展开预览' : '查看系统提示词'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void loadPromptPreview()}
+                    disabled={loadingPreview}
+                    className="rounded-[8px] border border-[#E8DCCF] bg-[#FFFDFC] px-3.5 py-2 text-sm font-semibold text-[#8A776B] transition hover:bg-[#F7F3F0] disabled:opacity-50"
+                  >
+                    刷新
+                  </button>
+                </div>
+                {previewError ? (
+                  <p className="rounded-[10px] bg-red-50 px-3 py-2 text-sm text-red-600">{previewError}</p>
+                ) : null}
+                {previewOpen && previewPrompt !== null ? (
+                  <pre className="max-h-[320px] overflow-auto whitespace-pre-wrap break-words rounded-[8px] border border-[#E8DCCF] bg-[#F7F3F0] p-3 text-xs leading-5 text-[#2D2118]">
+                    {previewPrompt}
+                  </pre>
+                ) : null}
+              </div>
+            </SectionCard>
+          ) : null}
           <PersistenceBanner />
           {error ? <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p> : null}
         </div>

@@ -132,7 +132,7 @@
       ],
       "lead": true,
       "available": true,
-      "evaluation": "专利思路理解与辩论引导，擅长整合观点、收敛方案，兼具创新与落地性"
+      "evaluation": "专利主笔起草人，负责理解原始idea、起草v0底稿、吸收三方评审并完成最终定稿"
     },
     "black-cat": {
       "family": "black-cat",
@@ -142,7 +142,7 @@
       ],
       "lead": true,
       "available": true,
-      "evaluation": "专利落地校验专家，擅长抠细节、找漏洞，确保方案可实施"
+      "evaluation": "专利模型合理性与可实现性评审，重点挑战复杂度、工程前提和落地可行性"
     },
     "cow-cat": {
       "family": "cow-cat",
@@ -152,17 +152,17 @@
       ],
       "lead": true,
       "available": true,
-      "evaluation": "专利创新发散，擅长挖掘核心创新点、提出突破性思路"
+      "evaluation": "专利创新性与保护空间评审，思维发散，负责挑战创新高度、绕开路径和从属方案"
     },
     "calico-cat": {
       "family": "calico",
       "roles": [
-        "coder",
-        "implementer"
+        "logic-reviewer",
+        "model-reviewer"
       ],
       "lead": true,
       "available": true,
-      "evaluation": "专利技术方案代码实现，擅长将抽象方案转化为可落地的代码逻辑"
+      "evaluation": "专利模型合理性与逻辑自洽评审，重点挑战概念定义、因果链、边界条件和推导完备性"
     },
     "antig-opus": {
       "family": "bengal",
@@ -240,7 +240,11 @@
             "temperature": 0.3
           },
           "source": "seed",
-          "accountRef": "claude"
+          "accountRef": "my-cladue",
+          "roleDescription": "主架构师和核心开发者，擅长深度思考和系统设计",
+          "teamStrengths": "架构设计、写代码一把好手",
+          "caution": null,
+          "sessionChain": true
         },
         {
           "id": "opus-sonnet",
@@ -293,7 +297,9 @@
             "temperature": 0.3
           },
           "source": "seed",
-          "accountRef": "claude"
+          "accountRef": "my-cladue",
+          "roleDescription": "主架构师和核心开发者，擅长深度思考和系统设计",
+          "sessionChain": true
         },
         {
           "id": "opus-45",
@@ -705,16 +711,12 @@
       "variants": [
         {
           "id": "dare-default",
-          "clientId": "dare",
-          "defaultModel": "z-ai/glm-4.7",
-          "mcpSupport": false,
+          "clientId": "kimi",
+          "defaultModel": "K2.6-code-preview",
+          "mcpSupport": true,
           "cli": {
-            "command": "python",
-            "outputFormat": "headless-json",
-            "defaultArgs": [
-              "-m",
-              "client"
-            ]
+            "command": "kimi",
+            "outputFormat": "stream-json"
           },
           "personality": "沉默寡言但极其警觉，不会主动亲近但一旦认可就绝对可靠，信任是挣来的不是给的",
           "strengths": [
@@ -729,7 +731,11 @@
             "maxContentLengthPerMsg": 8000
           },
           "source": "seed",
-          "accountRef": "dare"
+          "accountRef": "kimi",
+          "roleDescription": "确定性执行与审计引擎，擅长零信任验证、状态外化追踪和可重放执行",
+          "teamStrengths": "确定性执行、审计追踪、零信任验证、状态外化",
+          "caution": "框架猫，底层 LLM 可变；事件输出需映射",
+          "sessionChain": false
         }
       ]
     },
@@ -978,14 +984,16 @@
         "secondary": "#FFE4D1"
       },
       "mentionPatterns": [
-        "@opus-4-6",
+        "@opus4-6",
         "@大橘猫",
         "@大橘",
-        "@大橘喵"
+        "@big-orange",
+        "@orange"
       ],
-      "roleDescription": "专利思路理解与辩论引导者，擅长抓核心、统全局，整合创新+落地+代码形成收敛方案",
-      "teamStrengths": "全局整合、辩论引导、方案收敛",
+      "roleDescription": "专利主笔起草人，负责理解原始idea、起草v0底稿、组织三方评审、逐条吸收反馈并完成最终定稿",
+      "teamStrengths": "专利主笔、idea理解、底稿起草、评审收敛、最终定稿",
       "caution": null,
+      "workflowPromptPath": "config/workflows/patent/big-orange.md",
       "defaultVariantId": "big-orange-default",
       "variants": [
         {
@@ -1002,14 +1010,15 @@
             ],
             "effort": "max"
           },
-          "personality": "圆滚滚、沉稳通透、气场极强，理解力顶尖，擅长抓核心、统全局，不偏激，能精准捕捉用户idea的核心需求，在辩论中扮演引导者角色，最终将各方观点整合收敛",
+          "personality": "圆滚滚、沉稳通透、气场极强，理解力顶尖，擅长抓核心、统全局，不偏激，能精准捕捉用户idea的核心需求，并以主笔身份组织评审、裁决分歧、迭代定稿",
           "strengths": [
             "patent-understanding",
-            "debate-guidance",
+            "lead-drafting",
+            "review-integration",
             "convergence",
-            "architecture"
+            "claim-framing"
           ],
-          "teamStrengths": "全局整合、辩论引导、方案收敛",
+          "teamStrengths": "专利主笔、idea理解、底稿起草、评审收敛、最终定稿",
           "contextBudget": {
             "maxPromptTokens": 180000,
             "maxContextTokens": 160000,
@@ -1027,7 +1036,7 @@
           },
           "source": "seed",
           "accountRef": "my-cladue",
-          "roleDescription": "专利思路理解与辩论引导者，擅长抓核心、统全局，整合创新+落地+代码形成收敛方案",
+          "roleDescription": "专利主笔起草人，负责理解原始idea、起草v0底稿、组织三方评审、逐条吸收反馈并完成最终定稿",
           "caution": null,
           "sessionChain": true
         }
@@ -1045,14 +1054,16 @@
         "secondary": "#4A4A4A"
       },
       "mentionPatterns": [
-        "@gpt-5.4",
+        "@gpt5-4",
         "@玄猫",
         "@玄猫喵",
+        "@black-cat",
         "@black"
       ],
-      "roleDescription": "专利落地校验专家，擅长抠细节、找漏洞，逻辑严谨，对落地性要求极高",
-      "teamStrengths": "落地校验、细节补充、可行性分析",
+      "roleDescription": "专利模型合理性与可实现性评审，负责挑战方案是否太复杂、太务虚、工程前提过重或难以落地",
+      "teamStrengths": "模型合理性校验、工程可实现性、复杂度收益比、落地风险评审",
       "caution": null,
+      "workflowPromptPath": "config/workflows/patent/black-cat.md",
       "defaultVariantId": "black-cat-default",
       "variants": [
         {
@@ -1069,13 +1080,14 @@
             ],
             "effort": "xhigh"
           },
-          "personality": "通体漆黑、眼神锐利、心思缜密，冷静理性，擅长抠细节、找漏洞，逻辑严谨，对落地性要求极高，不盲从创新概念，喜欢用可行性衡量思路",
+          "personality": "通体漆黑、眼神锐利、心思缜密，冷静理性，擅长用工程现实挑战模型合理性和可实现性，不盲从复杂概念，尤其警惕太复杂不可落地、太务虚无法实施的方案",
           "strengths": [
+            "model-reasonableness",
             "feasibility-check",
-            "detail-validation",
-            "implementation-planning"
+            "implementation-risk",
+            "complexity-tradeoff"
           ],
-          "teamStrengths": "落地校验、细节补充、可行性分析",
+          "teamStrengths": "模型合理性校验、工程可实现性、复杂度收益比、落地风险评审",
           "contextBudget": {
             "maxPromptTokens": 240000,
             "maxContextTokens": 216000,
@@ -1093,7 +1105,7 @@
           },
           "source": "seed",
           "accountRef": "codex",
-          "roleDescription": "专利落地校验专家，擅长抠细节、找漏洞，逻辑严谨，对落地性要求极高",
+          "roleDescription": "专利模型合理性与可实现性评审，负责挑战方案是否太复杂、太务虚、工程前提过重或难以落地",
           "caution": null,
           "sessionChain": true
         }
@@ -1111,14 +1123,16 @@
         "secondary": "#FFFFFF"
       },
       "mentionPatterns": [
-        "@gemini-3.1",
+        "@gemini3-1",
         "@奶牛猫",
         "@奶牛",
+        "@cow-cat",
         "@cow"
       ],
-      "roleDescription": "专利创新发散专家，擅长挖掘核心创新点、提出突破性思路",
-      "teamStrengths": "创新发散、突破性思维、概念性创新",
-      "caution": "容易忽略落地细节，需要配合玄猫和三花",
+      "roleDescription": "专利创新性与保护空间评审，思维发散，负责挑战创新高度、寻找绕开路径、扩展从属方案和保护范围",
+      "teamStrengths": "创新性挑战、保护空间扩展、绕开路径发现、从属权利要求建议",
+      "caution": "容易发散过头，需要大橘猫裁决取舍，并由玄猫/三花校验合理性",
+      "workflowPromptPath": "config/workflows/patent/cow-cat.md",
       "defaultVariantId": "cow-cat-default",
       "variants": [
         {
@@ -1145,13 +1159,14 @@
             ],
             "supportsMultiplexing": true
           },
-          "personality": "黑白相间、脑洞大、活泼跳脱，思维发散，对新鲜idea敏感度极高，擅长跳出固有框架提出创新方向，说话直白，爱分享概念性思路",
+          "personality": "黑白相间、脑洞大、活泼跳脱，思维发散，对新鲜idea敏感度极高，擅长挑战创新性、发现绕开路径、提出更上位概括和从属方案，说话直白",
           "strengths": [
-            "innovation",
-            "creative-thinking",
-            "breakthrough-ideas"
+            "innovation-review",
+            "protection-scope",
+            "design-around-analysis",
+            "dependent-claim-ideas"
           ],
-          "teamStrengths": "创新发散、突破性思维、概念性创新",
+          "teamStrengths": "创新性挑战、保护空间扩展、绕开路径发现、从属权利要求建议",
           "contextBudget": {
             "maxPromptTokens": 350000,
             "maxContextTokens": 300000,
@@ -1169,8 +1184,8 @@
           },
           "source": "seed",
           "accountRef": "gemini",
-          "roleDescription": "专利创新发散专家，擅长挖掘核心创新点、提出突破性思路",
-          "caution": "容易忽略落地细节，需要配合玄猫和三花",
+          "roleDescription": "专利创新性与保护空间评审，思维发散，负责挑战创新高度、寻找绕开路径、扩展从属方案和保护范围",
+          "caution": "容易发散过头，需要大橘猫裁决取舍，并由玄猫/三花校验合理性",
           "sessionChain": true
         }
       ]
@@ -1187,14 +1202,16 @@
         "secondary": "#FFF3E0"
       },
       "mentionPatterns": [
-        "@kimi-2.6",
+        "@kimi2-6",
         "@三花猫",
         "@三花",
+        "@calico-cat",
         "@calico"
       ],
-      "roleDescription": "专利技术方案代码实现专家，擅长将抽象技术方案转化为可落地的代码逻辑",
-      "teamStrengths": "代码实现、技术转化、专利代码细节",
+      "roleDescription": "专利模型合理性与逻辑完备自洽评审，负责挑战概念定义、因果链、模块关系、边界条件和推导是否闭合",
+      "teamStrengths": "逻辑完备性、模型自洽性、概念定义、因果链与边界条件审查",
       "caution": null,
+      "workflowPromptPath": "config/workflows/patent/calico-cat.md",
       "defaultVariantId": "calico-cat-default",
       "variants": [
         {
@@ -1211,13 +1228,14 @@
               "stream-json"
             ]
           },
-          "personality": "毛色斑斓、心思细腻、专注严谨，代码能力突出，擅长将抽象技术方案转化为可落地的代码逻辑，注重代码规范性和可实施性",
+          "personality": "毛色斑斓、心思细腻、专注严谨，擅长挑战模型是否合理、概念是否一致、逻辑链条是否闭合，尤其关注前提、边界条件和推导自洽性",
           "strengths": [
-            "code-implementation",
-            "technical-conversion",
-            "patent-code-details"
+            "logic-completeness",
+            "model-consistency",
+            "causal-chain-review",
+            "boundary-condition-analysis"
           ],
-          "teamStrengths": "代码实现、技术转化、专利代码细节",
+          "teamStrengths": "逻辑完备性、模型自洽性、概念定义、因果链与边界条件审查",
           "contextBudget": {
             "maxPromptTokens": 240000,
             "maxContextTokens": 216000,
@@ -1235,7 +1253,7 @@
           },
           "source": "seed",
           "accountRef": "kimi",
-          "roleDescription": "专利技术方案代码实现专家，擅长将抽象技术方案转化为可落地的代码逻辑",
+          "roleDescription": "专利模型合理性与逻辑完备自洽评审，负责挑战概念定义、因果链、模块关系、边界条件和推导是否闭合",
           "caution": null,
           "sessionChain": true
         }

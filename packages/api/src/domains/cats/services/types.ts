@@ -30,13 +30,18 @@ export interface TokenUsage {
   contextUsedTokens?: number;
   /** Codex session token_count: reset timestamp (epoch ms) for display-only hint. */
   contextResetsAtMs?: number;
+  /** Provider stop reason when available (e.g. max_tokens, end_turn). */
+  stopReason?: string;
 }
 
 /** F8: Accumulate token usage — adds numeric fields from `incoming` into `existing` */
 export function mergeTokenUsage(existing: TokenUsage | undefined, incoming: TokenUsage): TokenUsage {
   if (!existing) return { ...incoming };
   const result = { ...existing };
-  const numericKeys: (keyof TokenUsage)[] = [
+  type NumericTokenUsageKey = {
+    [K in keyof TokenUsage]-?: NonNullable<TokenUsage[K]> extends number ? K : never;
+  }[keyof TokenUsage];
+  const numericKeys: NumericTokenUsageKey[] = [
     'inputTokens',
     'outputTokens',
     'totalTokens',
@@ -50,11 +55,11 @@ export function mergeTokenUsage(existing: TokenUsage | undefined, incoming: Toke
   for (const key of numericKeys) {
     const val = incoming[key];
     if (val != null) {
-      result[key] = ((result[key] as number) ?? 0) + (val as number);
+      result[key] = ((result[key] as number | undefined) ?? 0) + val;
     }
   }
   // Non-aggregating contextual fields should keep the most recent snapshot.
-  const latestKeys: (keyof TokenUsage)[] = [
+  const latestKeys: NumericTokenUsageKey[] = [
     'contextWindowSize',
     'lastTurnInputTokens',
     'contextUsedTokens',
@@ -65,6 +70,9 @@ export function mergeTokenUsage(existing: TokenUsage | undefined, incoming: Toke
     if (val != null) {
       result[key] = val;
     }
+  }
+  if (incoming.stopReason != null) {
+    result.stopReason = incoming.stopReason;
   }
   return result;
 }

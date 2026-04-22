@@ -158,9 +158,18 @@ function pickVariantMention(id: string, config: CatConfig): string {
   return `@${id}`;
 }
 
+function getCollaborationGroup(config: CatConfig | undefined): string {
+  return config?.collaborationGroup?.trim() || 'default';
+}
+
+function isSameCollaborationGroup(left: CatConfig | undefined, right: CatConfig | undefined): boolean {
+  return getCollaborationGroup(left) === getCollaborationGroup(right);
+}
+
 function buildCallableMentions(currentCatId: CatId): CallableMentionsResult {
+  const currentConfig = getConfig(currentCatId as string);
   const entries: CallableCatEntry[] = Object.entries(getAllConfigs())
-    .filter(([id]) => id !== currentCatId)
+    .filter(([id, config]) => id !== currentCatId && isSameCollaborationGroup(currentConfig, config))
     .map(([id, config]) => ({ id, config }));
 
   if (entries.length === 0) {
@@ -307,8 +316,11 @@ const WORKFLOW_TRIGGERS: Record<string, string> = {
  * Excludes the current cat. Returns null if no teammates.
  */
 function buildTeammateRoster(currentCatId: CatId): string | null {
+  const currentConfig = getConfig(currentCatId as string);
   const allConfigs = getAllConfigs();
-  const entries = Object.entries(allConfigs).filter(([id]) => id !== currentCatId);
+  const entries = Object.entries(allConfigs).filter(
+    ([id, config]) => id !== currentCatId && isSameCollaborationGroup(currentConfig, config),
+  );
   if (entries.length === 0) return null;
 
   const rows: string[] = [];
@@ -403,8 +415,8 @@ export function buildStaticIdentity(catId: CatId, options?: StaticIdentityOption
     lines.push(rosterLines, '');
   }
 
-  // Per-breed workflow triggers (fallback to catId for legacy configs without breedId)
-  const triggers = WORKFLOW_TRIGGERS[config.breedId ?? ''] ?? WORKFLOW_TRIGGERS[catId as string];
+  // Configured workflow prompt wins; built-in workflow triggers are fallback for core coding cats.
+  const triggers = config.workflowPrompt ?? WORKFLOW_TRIGGERS[config.breedId ?? ''] ?? WORKFLOW_TRIGGERS[catId as string];
   if (triggers) {
     lines.push(triggers, '');
   }
@@ -423,9 +435,8 @@ export function buildStaticIdentity(catId: CatId, options?: StaticIdentityOption
   const ccHandles = coCreator.mentionPatterns.map((p) => `\`${p}\``).join(' / ');
   lines.push(`${ccName}（铲屎官/CVO）。重要决策由${ccName}拍板。需要关注时行首写 ${ccHandles}。`, '');
 
-  // L0 Governance Digest — always-on principles from shared-rules.md (F086 post-completion fix)
-  // Source of truth: cat-cafe-skills/refs/shared-rules.md
-  lines.push('', GOVERNANCE_L0_DIGEST);
+  // Group governance — config override wins; otherwise fall back to the global L0 digest.
+  lines.push('', config.governancePrompt ?? GOVERNANCE_L0_DIGEST);
 
   // F129: Pack guardrails — hard constraint track (only adds strictness, never relaxes Core Rails)
   if (packBlocks?.guardrailBlock) {

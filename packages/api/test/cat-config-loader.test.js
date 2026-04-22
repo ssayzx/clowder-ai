@@ -475,7 +475,7 @@ describe('cat-config-loader', () => {
     });
 
     it('F053: loads project config for gemini (sessionChain: true after parity fix)', () => {
-      // Uses the actual project cat-config.json
+      // Uses the actual project cat-template.json
       const config = loadCatConfig();
       assert.equal(isSessionChainEnabled('gemini', config), true);
       assert.equal(isSessionChainEnabled('opus', config), true);
@@ -669,6 +669,58 @@ describe('F32-b: toAllCatConfigs (multi-variant)', () => {
     assert.equal(all.opus.breedId, 'ragdoll');
     assert.equal(all['opus-45'].breedId, 'ragdoll');
     assert.equal(all.gemini.breedId, 'siamese');
+  });
+
+  it('inherits breed-level workflowPrompt into every variant', () => {
+    const cfg = multiVariantConfig();
+    cfg.breeds[0].workflowPrompt = '## Breed workflow\n- Draft and review together.';
+    const config = loadCatConfig(writeTempConfig(cfg));
+    const all = toAllCatConfigs(config);
+    assert.equal(all.opus.workflowPrompt, '## Breed workflow\n- Draft and review together.');
+    assert.equal(all['opus-45'].workflowPrompt, '## Breed workflow\n- Draft and review together.');
+  });
+
+  it('lets variant workflowPrompt override the breed-level workflowPrompt', () => {
+    const cfg = multiVariantConfig();
+    cfg.breeds[0].workflowPrompt = '## Breed workflow';
+    cfg.breeds[0].variants[1].workflowPrompt = '## Variant workflow';
+    const config = loadCatConfig(writeTempConfig(cfg));
+    const all = toAllCatConfigs(config);
+    assert.equal(all.opus.workflowPrompt, '## Breed workflow');
+    assert.equal(all['opus-45'].workflowPrompt, '## Variant workflow');
+  });
+
+  it('resolves workflowPromptPath relative to the config file', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'cat-template-workflow-'));
+    const cfgPath = join(dir, 'cat-template.json');
+    const workflowPath = join(dir, 'workflow.md');
+    writeFileSync(workflowPath, '## External workflow\n- Loaded from Markdown.\n');
+    const cfg = multiVariantConfig();
+    cfg.breeds[0].workflowPromptPath = 'workflow.md';
+    writeFileSync(cfgPath, JSON.stringify(cfg));
+
+    const config = loadCatConfig(cfgPath);
+    const all = toAllCatConfigs(config);
+    assert.equal(all.opus.workflowPrompt, '## External workflow\n- Loaded from Markdown.');
+    assert.equal(all['opus-45'].workflowPrompt, '## External workflow\n- Loaded from Markdown.');
+  });
+
+  it('resolves governancePromptPath and collaborationGroup into flattened configs', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'cat-template-governance-'));
+    const cfgPath = join(dir, 'cat-template.json');
+    const governancePath = join(dir, 'governance.md');
+    writeFileSync(governancePath, '## 家规（测试组）\n- 只在组内协作。\n');
+    const cfg = multiVariantConfig();
+    cfg.breeds[0].collaborationGroup = 'patent';
+    cfg.breeds[0].governancePromptPath = 'governance.md';
+    writeFileSync(cfgPath, JSON.stringify(cfg));
+
+    const config = loadCatConfig(cfgPath);
+    const all = toAllCatConfigs(config);
+    assert.equal(all.opus.collaborationGroup, 'patent');
+    assert.equal(all['opus-45'].collaborationGroup, 'patent');
+    assert.equal(all.opus.governancePrompt, '## 家规（测试组）\n- 只在组内协作。');
+    assert.equal(all['opus-45'].governancePrompt, '## 家规（测试组）\n- 只在组内协作。');
   });
 
   it('throws on duplicate catId', () => {
@@ -926,10 +978,10 @@ describe('F32-b P4c: Sonnet variant in project config', () => {
     assert.notDeepEqual(all.sonnet.color, all.opus.color);
   });
 
-  it('total cat count is 13 (opus + sonnet + opus-45 + codex + gpt52 + spark + gemini + gemini25 + kimi + dare + antigravity + antig-opus + opencode)', () => {
+  it('total cat count is 17 including patent cats', () => {
     const config = loadCatConfig();
     const all = toAllCatConfigs(config);
-    assert.equal(Object.keys(all).length, 13);
+    assert.equal(Object.keys(all).length, 17);
     assert.ok(all.opus);
     assert.ok(all.sonnet);
     assert.ok(all['opus-45']);
@@ -943,6 +995,10 @@ describe('F32-b P4c: Sonnet variant in project config', () => {
     assert.ok(all.antigravity); // F061: Bengal cat (Antigravity CDP bridge)
     assert.ok(all['antig-opus']); // F061: Bengal cat Claude variant
     assert.ok(all.opencode); // F105: OpenCode external agent
+    assert.ok(all['big-orange']);
+    assert.ok(all['black-cat']);
+    assert.ok(all['cow-cat']);
+    assert.ok(all['calico-cat']);
   });
 
   it('projects antigravity commandArgs from cli.defaultArgs when variant.commandArgs is absent', () => {
