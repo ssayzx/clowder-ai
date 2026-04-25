@@ -132,7 +132,7 @@
       ],
       "lead": true,
       "available": true,
-      "evaluation": "专利主笔起草人，负责理解原始idea、起草v0底稿、吸收三方评审并完成最终定稿"
+      "evaluation": "专利主笔起草人，负责理解原始idea、起草底稿、吸收三方评审并完成最终定稿"
     },
     "black-cat": {
       "family": "black-cat",
@@ -712,7 +712,7 @@
         {
           "id": "dare-default",
           "clientId": "kimi",
-          "defaultModel": "K2.6-code-preview",
+          "defaultModel": "K2.6",
           "mcpSupport": true,
           "cli": {
             "command": "kimi",
@@ -990,7 +990,7 @@
         "@big-orange",
         "@orange"
       ],
-      "roleDescription": "专利主笔起草人，负责理解原始idea、起草v0底稿、组织三方评审、逐条吸收反馈并完成最终定稿",
+      "roleDescription": "专利主笔起草人，负责理解原始idea、起草底稿、组织三方评审、逐条吸收反馈并完成最终定稿",
       "teamStrengths": "专利主笔、idea理解、底稿起草、评审收敛、最终定稿",
       "caution": null,
       "collaborationGroup": "patent",
@@ -1038,7 +1038,7 @@
           },
           "source": "seed",
           "accountRef": "my-cladue",
-          "roleDescription": "专利主笔起草人，负责理解原始idea、起草v0底稿、组织三方评审、逐条吸收反馈并完成最终定稿",
+          "roleDescription": "专利主笔起草人，负责理解原始idea、起草底稿、组织三方评审、逐条吸收反馈并完成最终定稿",
           "caution": null,
           "sessionChain": true
         }
@@ -1225,7 +1225,7 @@
         {
           "id": "calico-cat-default",
           "clientId": "kimi",
-          "defaultModel": "K2.6-code-preview",
+          "defaultModel": "K2.6",
           "mcpSupport": true,
           "cli": {
             "command": "kimi",
