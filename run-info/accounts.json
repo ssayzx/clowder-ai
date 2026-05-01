@@ -1,0 +1,19 @@
+{
+  "xueding": {
+    "authType": "api_key",
+    "baseUrl": "https://xuedingtoken.com",
+    "models": [
+      "claude-opus-4-6",
+      "claude-sonnet-4-6"
+    ],
+    "displayName": "CodeRelay-min"
+  },
+  "coderelay": {
+    "authType": "api_key",
+    "baseUrl": "https://coderelay.cn/",
+    "models": [
+      "claude-opus-4-6"
+    ],
+    "displayName": "CodeRelay"
+  }
+}

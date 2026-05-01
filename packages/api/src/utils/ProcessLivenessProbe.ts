@@ -32,7 +32,7 @@ export interface ProbeConfig {
 const DEFAULT_CONFIG: ProbeConfig = {
   sampleIntervalMs: 60_000,
   softWarningMs: 120_000,
-  stallWarningMs: 300_000,
+  stallWarningMs: 300_000 * 4,
   boundedExtensionFactor: 2.0,
 };
 
