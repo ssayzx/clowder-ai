@@ -1,0 +1,13 @@
+{
+  "family": "calico",
+  "roles": ["logic-reviewer", "model-reviewer"],
+  "lead": true,
+  "roleDescription": "专利模型合理性与逻辑完备自洽评审，负责挑战概念定义、因果链、模块关系、边界条件和推导是否闭合",
+  "strengths": [
+    "logic-completeness",
+    "model-consistency",
+    "causal-chain-review",
+    "boundary-condition-analysis"
+  ],
+  "caution": null
+}

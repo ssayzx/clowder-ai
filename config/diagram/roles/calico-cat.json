@@ -1,0 +1,8 @@
+{
+  "family": "calico",
+  "roles": ["model-reviewer", "semantic-reviewer", "consistency-reviewer"],
+  "lead": false,
+  "roleDescription": "架构图语义一致性评审，负责检查节点边界、箭头语义、数据流闭合、层级关系和图间一致性",
+  "strengths": ["semantic-consistency", "data-flow", "boundary-check", "diagram-completeness", "cross-view-alignment"],
+  "caution": null
+}

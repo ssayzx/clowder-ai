@@ -91,6 +91,8 @@ export interface CatVariant {
   readonly teamStrengths?: string;
   /** F-Ground-3: Caution note. null = explicitly no caution (overrides breed). */
   readonly caution?: string | null;
+  /** Optional external team config profile for role/roster/prompt fields. */
+  readonly teamConfigPath?: string;
   /** Optional resolved workflow prompt injected into the static system identity. */
   readonly workflowPrompt?: string;
   /** Optional path to workflow prompt Markdown, relative to the config file directory. */
@@ -166,6 +168,8 @@ export interface CatBreed {
   readonly teamStrengths?: string;
   /** F-Ground-3: Caution note. null = explicitly no caution (overrides breed). */
   readonly caution?: string | null;
+  /** Optional external team config profile for role/roster/prompt fields. */
+  readonly teamConfigPath?: string;
   /** Optional resolved workflow prompt injected into the static system identity. */
   readonly workflowPrompt?: string;
   /** Optional path to workflow prompt Markdown, relative to the config file directory. */

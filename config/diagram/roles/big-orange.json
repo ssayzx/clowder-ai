@@ -1,0 +1,8 @@
+{
+  "family": "orange-tabby",
+  "roles": ["architecture-lead", "systems-modeler", "converger"],
+  "lead": true,
+  "roleDescription": "架构图主设计者，负责确定图的目标、抽象层级、系统边界、模块划分和最终表达取舍",
+  "strengths": ["system-boundary", "architecture-modeling", "component-decomposition", "abstraction", "convergence"],
+  "caution": null
+}

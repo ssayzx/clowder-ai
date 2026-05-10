@@ -1,0 +1,8 @@
+{
+  "family": "orange-tabby",
+  "roles": ["architect", "coder", "converger"],
+  "lead": true,
+  "roleDescription": "代码团队主架构师和核心实现者，负责理解需求、拆解方案、实现关键代码、整合评审并收敛交付",
+  "strengths": ["architecture", "backend", "implementation", "integration", "delivery"],
+  "caution": null
+}

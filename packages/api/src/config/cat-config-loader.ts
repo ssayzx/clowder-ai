@@ -24,6 +24,7 @@ import { type ClientId, createCatId, normalizeCliEffortForProvider } from '@cat-
 import { z } from 'zod';
 import { createModuleLogger } from '../infrastructure/logger.js';
 import { bootstrapCatCatalog, readCatCatalogRaw, resolveCatCatalogPath } from './cat-catalog-store.js';
+import { applyReferencedTeamProfiles, applyTeamProfile, getActiveTeamId } from './team-config.js';
 
 const log = createModuleLogger('cat-config');
 
@@ -97,6 +98,7 @@ const catVariantSchema = z.object({
     .optional(),
   teamStrengths: z.string().optional(), // F-Ground-3: human-readable strengths
   caution: z.string().nullable().optional(), // F-Ground-3: null = explicit no-caution (R1 fix)
+  teamConfigPath: z.string().min(1).optional(),
   workflowPrompt: z.string().min(1).optional(),
   workflowPromptPath: z.string().min(1).optional(),
   collaborationGroup: z.string().min(1).optional(),
@@ -159,12 +161,13 @@ const catBreedSchema = z.object({
   avatar: z.string().min(1),
   color: colorSchema,
   mentionPatterns: z.array(mentionPatternSchema).min(1),
-  roleDescription: z.string().min(1),
+  roleDescription: z.string().min(1).optional(),
   defaultVariantId: z.string().min(1),
   variants: z.array(catVariantSchema).min(1),
   features: catFeaturesSchema,
   teamStrengths: z.string().optional(), // F-Ground-3: breed-level default
   caution: z.string().nullable().optional(), // F-Ground-3: null = explicit no-caution (R1 fix)
+  teamConfigPath: z.string().min(1).optional(),
   workflowPrompt: z.string().min(1).optional(),
   workflowPromptPath: z.string().min(1).optional(),
   collaborationGroup: z.string().min(1).optional(),
@@ -356,11 +359,13 @@ export function loadCatConfig(filePath?: string): CatCafeConfig {
   let raw: string;
   let resolvedPath = filePath;
   let workflowBaseDir: string;
+  let projectRootForTeam: string | null = null;
   if (filePath) {
     try {
       raw = readFileSync(filePath, 'utf-8');
       const fileDir = dirname(filePath);
       workflowBaseDir = basename(fileDir) === '.cat-cafe' ? dirname(fileDir) : fileDir;
+      projectRootForTeam = workflowBaseDir;
     } catch (err) {
       const code = (err as NodeJS.ErrnoException).code;
       throw new Error(`Failed to read cat config at ${filePath}: ${code ?? 'unknown error'}`);
@@ -368,6 +373,7 @@ export function loadCatConfig(filePath?: string): CatCafeConfig {
   } else {
     const templatePath = process.env.CAT_TEMPLATE_PATH ?? DEFAULT_CAT_TEMPLATE_PATH;
     const projectRoot = dirname(templatePath);
+    projectRootForTeam = projectRoot;
     workflowBaseDir = projectRoot;
     const catalogRaw = readCatCatalogRaw(projectRoot);
     if (catalogRaw !== null) {
@@ -410,7 +416,20 @@ export function loadCatConfig(filePath?: string): CatCafeConfig {
   // Zod output has mutable arrays + plain string catId;
   // CatCafeConfig has readonly arrays + branded CatId.
   // The shapes match at runtime after validation.
-  return resolvePromptFiles(result.data as unknown as CatCafeConfig, workflowBaseDir);
+  const referencedTeamConfig = projectRootForTeam
+    ? applyReferencedTeamProfiles(result.data as unknown as CatCafeConfig, projectRootForTeam)
+    : (result.data as unknown as CatCafeConfig);
+  const resolvedConfig = resolvePromptFiles(referencedTeamConfig, workflowBaseDir);
+  const teamConfig = projectRootForTeam
+    ? applyTeamProfile(resolvedConfig, projectRootForTeam, getActiveTeamId())
+    : resolvedConfig;
+  const finalConfig = resolvePromptFiles(teamConfig, projectRootForTeam ?? workflowBaseDir);
+  for (const breed of finalConfig.breeds) {
+    if (!breed.roleDescription) {
+      throw new Error(`Breed "${breed.id}": roleDescription missing; add it to cat-template.json or referenced team config`);
+    }
+  }
+  return finalConfig;
 }
 
 export function bootstrapDefaultCatCatalog(templatePath?: string): CatCafeConfig {

@@ -168,6 +168,7 @@ import {
   sliceRoutes,
   summariesRoutes,
   tasksRoutes,
+  teamsRoutes,
   threadBranchRoutes,
   threadCatsRoutes,
   threadsRoutes,
@@ -1178,6 +1179,11 @@ async function main(): Promise<void> {
     });
   }
   await app.register(catsRoutes);
+  await app.register(teamsRoutes, {
+    onTeamChanged: async () => {
+      await syncAgentRegistry(catRegistry.getAllConfigs());
+    },
+  });
 
   // F149 Phase C: ACP pool diagnostics endpoint (gated by env flag)
   app.get('/api/diagnostics/acp-pool', async (_req, reply) => {

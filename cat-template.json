@@ -124,46 +124,6 @@
       "available": false,
       "evaluation": "中文长文理解与总结强，适合中文表达、资料整理与结构化输出"
     },
-    "big-orange": {
-      "family": "orange-tabby",
-      "roles": [
-        "architect",
-        "converger"
-      ],
-      "lead": true,
-      "available": true,
-      "evaluation": "专利主笔起草人，负责理解原始idea、起草底稿、吸收三方评审并完成最终定稿"
-    },
-    "black-cat": {
-      "family": "black-cat",
-      "roles": [
-        "peer-reviewer",
-        "validator"
-      ],
-      "lead": true,
-      "available": true,
-      "evaluation": "专利模型合理性与可实现性评审，重点挑战复杂度、工程前提和落地可行性"
-    },
-    "cow-cat": {
-      "family": "cow-cat",
-      "roles": [
-        "innovator",
-        "creative"
-      ],
-      "lead": true,
-      "available": true,
-      "evaluation": "专利创新性与保护空间评审，思维发散，负责挑战创新高度、绕开路径和从属方案"
-    },
-    "calico-cat": {
-      "family": "calico",
-      "roles": [
-        "logic-reviewer",
-        "model-reviewer"
-      ],
-      "lead": true,
-      "available": true,
-      "evaluation": "专利模型合理性与逻辑自洽评审，重点挑战概念定义、因果链、边界条件和推导完备性"
-    },
     "antig-opus": {
       "family": "bengal",
       "roles": [
@@ -992,12 +952,6 @@
         "@big-orange",
         "@orange"
       ],
-      "roleDescription": "专利主笔起草人，负责理解原始idea、起草底稿、组织三方评审、逐条吸收反馈并完成最终定稿",
-      "teamStrengths": "专利主笔、idea理解、底稿起草、评审收敛、最终定稿",
-      "caution": null,
-      "collaborationGroup": "patent",
-      "governancePromptPath": "config/governance/patent.md",
-      "workflowPromptPath": "config/workflows/patent/big-orange.md",
       "defaultVariantId": "big-orange-default",
       "variants": [
         {
@@ -1014,15 +968,6 @@
             ],
             "effort": "max"
           },
-          "personality": "圆滚滚、沉稳通透、气场极强，理解力顶尖，擅长抓核心、统全局，不偏激，能精准捕捉用户idea的核心需求，并以主笔身份组织评审、裁决分歧、迭代定稿",
-          "strengths": [
-            "patent-understanding",
-            "lead-drafting",
-            "review-integration",
-            "convergence",
-            "claim-framing"
-          ],
-          "teamStrengths": "专利主笔、idea理解、底稿起草、评审收敛、最终定稿",
           "contextBudget": {
             "maxPromptTokens": 180000,
             "maxContextTokens": 160000,
@@ -1040,11 +985,10 @@
           },
           "source": "seed",
           "accountRef": "coderelay",
-          "roleDescription": "专利主笔起草人，负责理解原始idea、起草底稿、组织三方评审、逐条吸收反馈并完成最终定稿",
-          "caution": null,
           "sessionChain": true
         }
-      ]
+      ],
+      "teamConfigPath": "config/patent/team.json"
     },
     {
       "id": "black-cat",
@@ -1064,12 +1008,6 @@
         "@black-cat",
         "@black"
       ],
-      "roleDescription": "专利模型合理性与可实现性评审，负责挑战方案是否太复杂、太务虚、工程前提过重或难以落地",
-      "teamStrengths": "模型合理性校验、工程可实现性、复杂度收益比、落地风险评审",
-      "caution": null,
-      "collaborationGroup": "patent",
-      "governancePromptPath": "config/governance/patent.md",
-      "workflowPromptPath": "config/workflows/patent/black-cat.md",
       "defaultVariantId": "black-cat-default",
       "variants": [
         {
@@ -1086,14 +1024,6 @@
             ],
             "effort": "xhigh"
           },
-          "personality": "通体漆黑、眼神锐利、心思缜密，冷静理性，擅长用工程现实挑战模型合理性和可实现性，不盲从复杂概念，尤其警惕太复杂不可落地、太务虚无法实施的方案",
-          "strengths": [
-            "model-reasonableness",
-            "feasibility-check",
-            "implementation-risk",
-            "complexity-tradeoff"
-          ],
-          "teamStrengths": "模型合理性校验、工程可实现性、复杂度收益比、落地风险评审",
           "contextBudget": {
             "maxPromptTokens": 240000,
             "maxContextTokens": 216000,
@@ -1111,11 +1041,10 @@
           },
           "source": "seed",
           "accountRef": "codex",
-          "roleDescription": "专利模型合理性与可实现性评审，负责挑战方案是否太复杂、太务虚、工程前提过重或难以落地",
-          "caution": null,
           "sessionChain": true
         }
-      ]
+      ],
+      "teamConfigPath": "config/patent/team.json"
     },
     {
       "id": "cow-cat",
@@ -1135,12 +1064,6 @@
         "@cow-cat",
         "@cow"
       ],
-      "roleDescription": "专利创新性与保护空间评审，思维发散，负责挑战创新高度、寻找绕开路径、扩展从属方案和保护范围",
-      "teamStrengths": "创新性挑战、保护空间扩展、绕开路径发现、从属权利要求建议",
-      "caution": "容易发散过头，需要大橘猫裁决取舍，并由玄猫/三花校验合理性",
-      "collaborationGroup": "patent",
-      "governancePromptPath": "config/governance/patent.md",
-      "workflowPromptPath": "config/workflows/patent/cow-cat.md",
       "defaultVariantId": "cow-cat-default",
       "variants": [
         {
@@ -1167,14 +1090,6 @@
             ],
             "supportsMultiplexing": true
           },
-          "personality": "黑白相间、脑洞大、活泼跳脱，思维发散，对新鲜idea敏感度极高，擅长挑战创新性、发现绕开路径、提出更上位概括和从属方案，说话直白",
-          "strengths": [
-            "innovation-review",
-            "protection-scope",
-            "design-around-analysis",
-            "dependent-claim-ideas"
-          ],
-          "teamStrengths": "创新性挑战、保护空间扩展、绕开路径发现、从属权利要求建议",
           "contextBudget": {
             "maxPromptTokens": 350000,
             "maxContextTokens": 300000,
@@ -1192,11 +1107,10 @@
           },
           "source": "seed",
           "accountRef": "gemini",
-          "roleDescription": "专利创新性与保护空间评审，思维发散，负责挑战创新高度、寻找绕开路径、扩展从属方案和保护范围",
-          "caution": "容易发散过头，需要大橘猫裁决取舍，并由玄猫/三花校验合理性",
           "sessionChain": true
         }
-      ]
+      ],
+      "teamConfigPath": "config/patent/team.json"
     },
     {
       "id": "calico",
@@ -1216,12 +1130,6 @@
         "@calico-cat",
         "@calico"
       ],
-      "roleDescription": "专利模型合理性与逻辑完备自洽评审，负责挑战概念定义、因果链、模块关系、边界条件和推导是否闭合",
-      "teamStrengths": "逻辑完备性、模型自洽性、概念定义、因果链与边界条件审查",
-      "caution": null,
-      "collaborationGroup": "patent",
-      "governancePromptPath": "config/governance/patent.md",
-      "workflowPromptPath": "config/workflows/patent/calico-cat.md",
       "defaultVariantId": "calico-cat-default",
       "variants": [
         {
@@ -1238,14 +1146,6 @@
               "stream-json"
             ]
           },
-          "personality": "毛色斑斓、心思细腻、专注严谨，擅长挑战模型是否合理、概念是否一致、逻辑链条是否闭合，尤其关注前提、边界条件和推导自洽性",
-          "strengths": [
-            "logic-completeness",
-            "model-consistency",
-            "causal-chain-review",
-            "boundary-condition-analysis"
-          ],
-          "teamStrengths": "逻辑完备性、模型自洽性、概念定义、因果链与边界条件审查",
           "contextBudget": {
             "maxPromptTokens": 240000,
             "maxContextTokens": 216000,
@@ -1263,11 +1163,10 @@
           },
           "source": "seed",
           "accountRef": "kimi",
-          "roleDescription": "专利模型合理性与逻辑完备自洽评审，负责挑战概念定义、因果链、模块关系、边界条件和推导是否闭合",
-          "caution": null,
           "sessionChain": true
         }
-      ]
+      ],
+      "teamConfigPath": "config/patent/team.json"
     }
   ]
 }

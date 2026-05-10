@@ -3,6 +3,7 @@ import { useChatStore } from '@/stores/chatStore';
 import { ExportButton } from './ExportButton';
 import { HubButton } from './HubButton';
 import { CatCafeLogo } from './icons/CatCafeLogo';
+import { TeamSwitcher } from './TeamSwitcher';
 import { ThemeToggle } from './ThemeToggle';
 import { VoiceCompanionButton } from './VoiceCompanionButton';
 
@@ -81,6 +82,7 @@ export function ChatContainerHeader({
             🔐 {authPendingCount}
           </span>
         )}
+        <TeamSwitcher />
         {/* F056 Phase D: Theme toggle */}
         <ThemeToggle />
         {/* F099 P1-2: Hub gear in top bar — always reachable even when right panel shows workspace */}

@@ -1,3 +1,8 @@
+### start
+
+nvm use system # 切换回系统node 20
+
+
 ### 可以在行末尾 @自己
   - 只看最后一个非空行
   - 命中 continuation marker 才触发

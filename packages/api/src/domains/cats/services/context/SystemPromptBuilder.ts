@@ -331,7 +331,7 @@ function buildTeammateRoster(currentCatId: CatId): string | null {
         ? `${config.displayName}/${config.nickname}`
         : config.displayName;
     const mention = pickVariantMention(id, config);
-    const strengths = config.teamStrengths ?? config.roleDescription;
+    const strengths = config.teamStrengths ?? config.strengths?.join('、') ?? config.roleDescription;
     const caution = config.caution ?? '—';
     rows.push(`| ${label} | ${mention} | ${strengths} | ${caution} |`);
   }
@@ -384,7 +384,7 @@ export function buildStaticIdentity(catId: CatId, options?: StaticIdentityOption
     `你是 ${nameLabel}，由 ${providerLabel} 提供的 AI 猫猫。`,
     ...(config.nickname ? [`昵称 "${config.nickname}" 的由来见 docs/stories/cat-names/。`] : []),
     `角色：${config.roleDescription}`,
-    `性格：${config.personality}`,
+    ...(config.personality ? [`性格：${config.personality}`] : []),
     '',
   );
 

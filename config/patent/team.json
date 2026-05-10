@@ -1,0 +1,15 @@
+{
+  "id": "patent",
+  "displayName": "专利团队",
+  "description": "专利起草、可实现性评审、创新性扩展和逻辑完备性评审团队",
+  "members": ["big-orange", "black-cat", "cow-cat", "calico-cat"],
+  "roleDir": "roles",
+  "workflowDir": "workflow",
+  "governancePromptPath": "governance.md",
+  "reviewPolicy": {
+    "requireDifferentFamily": true,
+    "preferActiveInThread": true,
+    "preferLead": true,
+    "excludeUnavailable": true
+  }
+}

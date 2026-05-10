@@ -18,6 +18,7 @@ const {
   getCatEffort,
   _resetCachedConfig,
 } = await import('../dist/config/cat-config-loader.js');
+const { setActiveTeamId, DEFAULT_TEAM_ID } = await import('../dist/config/team-config.js');
 
 /** Create a temp JSON file with given content, return path */
 function writeTempConfig(data) {
@@ -25,6 +26,13 @@ function writeTempConfig(data) {
   const path = join(dir, 'cat-template.json');
   writeFileSync(path, JSON.stringify(data));
   return path;
+}
+
+function writeTempProjectConfig(data) {
+  const dir = mkdtempSync(join(tmpdir(), 'cat-template-project-'));
+  const path = join(dir, 'cat-template.json');
+  writeFileSync(path, JSON.stringify(data));
+  return { dir, path };
 }
 
 /** Minimal valid config for testing */
@@ -150,6 +158,136 @@ describe('cat-config-loader', () => {
       }
     });
 
+    it('applies active team profile overlays from config/<team>/team.json', () => {
+      const cfg = multiVariantConfig();
+      cfg.version = 2;
+      cfg.reviewPolicy = {
+        requireDifferentFamily: true,
+        preferActiveInThread: true,
+        preferLead: true,
+        excludeUnavailable: true,
+      };
+      cfg.roster = {
+        opus: { family: 'ragdoll', roles: ['architect'], lead: true, available: true, evaluation: 'base' },
+        'opus-45': { family: 'ragdoll', roles: ['assistant'], lead: false, available: true, evaluation: 'base' },
+        gemini: { family: 'siamese', roles: ['designer'], lead: true, available: true, evaluation: 'base' },
+      };
+      const { dir, path } = writeTempProjectConfig(cfg);
+      mkdirSync(join(dir, 'config', 'code', 'workflow'), { recursive: true });
+      mkdirSync(join(dir, 'config', 'code', 'governance'), { recursive: true });
+      writeFileSync(join(dir, 'config', 'code', 'workflow', 'codex.md'), 'code workflow');
+      writeFileSync(join(dir, 'config', 'code', 'governance', 'code.md'), 'code governance');
+      writeFileSync(
+        join(dir, 'config', 'code', 'team.json'),
+        JSON.stringify({
+          displayName: '写代码团队',
+          members: ['opus', 'opus-45'],
+          roles: {
+            opus: {
+              roleDescription: '代码主架构师',
+              teamStrengths: '架构和实现',
+              roles: ['architect', 'coder'],
+              lead: true,
+              available: true,
+              evaluation: '代码团队主力',
+            },
+            'opus-45': {
+              roleDescription: '代码副手',
+              workflowPromptPath: 'workflow/codex.md',
+              governancePromptPath: 'governance/code.md',
+              roles: ['peer-reviewer'],
+              available: true,
+              evaluation: '代码团队审查',
+            },
+          },
+        }),
+      );
+
+      setActiveTeamId(dir, 'code');
+      try {
+        const config = loadCatConfig(path);
+        const all = toAllCatConfigs(config);
+        assert.deepEqual(Object.keys(all).sort(), ['opus', 'opus-45']);
+        assert.equal(all.opus.roleDescription, '代码主架构师');
+        assert.equal(all.opus.teamStrengths, '架构和实现');
+        assert.equal(all.opus.collaborationGroup, 'code');
+        assert.equal(all['opus-45'].roleDescription, '代码副手');
+        assert.equal(all['opus-45'].workflowPrompt, 'code workflow');
+        assert.equal(all['opus-45'].governancePrompt, 'code governance');
+        assert.deepEqual(config.roster?.opus.roles, ['architect', 'coder']);
+      } finally {
+        setActiveTeamId(dir, DEFAULT_TEAM_ID);
+        _resetCachedConfig();
+      }
+    });
+
+    it('fills referenced team profile fields from teamConfigPath while keeping legacy cats inline', () => {
+      const cfg = multiVariantConfig();
+      cfg.version = 2;
+      cfg.reviewPolicy = {
+        requireDifferentFamily: true,
+        preferActiveInThread: true,
+        preferLead: true,
+        excludeUnavailable: true,
+      };
+      cfg.roster = {
+        gemini: { family: 'siamese', roles: ['designer'], lead: true, available: true, evaluation: 'legacy' },
+      };
+      cfg.breeds[0].teamConfigPath = 'config/patent/team.json';
+      delete cfg.breeds[0].roleDescription;
+
+      const { dir, path } = writeTempProjectConfig(cfg);
+      mkdirSync(join(dir, 'config', 'patent', 'workflow'), { recursive: true });
+      mkdirSync(join(dir, 'config', 'patent', 'roles'), { recursive: true });
+      writeFileSync(join(dir, 'config', 'patent', 'workflow', 'opus.md'), 'patent opus workflow');
+      writeFileSync(join(dir, 'config', 'patent', 'workflow', 'opus-45.md'), 'patent opus-45 workflow');
+      writeFileSync(join(dir, 'config', 'patent', 'governance.md'), 'patent governance');
+      writeFileSync(
+        join(dir, 'config', 'patent', 'team.json'),
+        JSON.stringify({
+          id: 'patent',
+          displayName: '专利团队',
+          members: ['opus', 'opus-45'],
+          roleDir: 'roles',
+          workflowDir: 'workflow',
+          governancePromptPath: 'governance.md',
+        }),
+      );
+      writeFileSync(
+        join(dir, 'config', 'patent', 'roles', 'opus.json'),
+        JSON.stringify({
+          roleDescription: '专利主笔',
+          strengths: ['drafting', 'claim-framing'],
+          roles: ['patent-drafter'],
+          lead: true,
+        }),
+      );
+      writeFileSync(
+        join(dir, 'config', 'patent', 'roles', 'opus-45.json'),
+        JSON.stringify({
+          roleDescription: '专利评审',
+          roles: ['patent-reviewer'],
+        }),
+      );
+
+      const config = loadCatConfig(path);
+      const all = toAllCatConfigs(config);
+      assert.equal(all.opus.roleDescription, '专利主笔');
+      assert.equal(all.opus.personality, '');
+      assert.deepEqual(all.opus.strengths, ['drafting', 'claim-framing']);
+      assert.equal(all.opus.workflowPrompt, 'patent opus workflow');
+      assert.equal(all.opus.governancePrompt, 'patent governance');
+      assert.equal(all.opus.collaborationGroup, 'patent');
+      assert.equal(all['opus-45'].roleDescription, '专利评审');
+      assert.equal(all['opus-45'].workflowPrompt, 'patent opus-45 workflow');
+      assert.equal(all.gemini.roleDescription, '视觉设计');
+      assert.deepEqual(config.roster?.opus.roles, ['patent-drafter']);
+      assert.equal(config.roster?.opus.evaluation, '专利主笔');
+      assert.deepEqual(config.roster?.['opus-45'].roles, ['patent-reviewer']);
+      assert.equal(config.roster?.['opus-45'].evaluation, '专利评审');
+      assert.deepEqual(config.roster?.gemini.roles, ['designer']);
+    });
+
     it('replaces cli object when catalog switches provider so stale effort/defaultArgs do not leak from base', () => {
       const projectDir = mkdtempSync(join(tmpdir(), 'cat-cli-merge-project-'));
       const templatePath = join(projectDir, 'cat-template.json');
@@ -251,7 +389,7 @@ describe('cat-config-loader', () => {
       const bad = validConfig();
       delete bad.breeds[0].roleDescription;
       const path = writeTempConfig(bad);
-      assert.throws(() => loadCatConfig(path), /Invalid cat config/);
+      assert.throws(() => loadCatConfig(path), /roleDescription missing/);
     });
 
     it('rejects wrong version', () => {

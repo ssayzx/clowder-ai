@@ -1,0 +1,8 @@
+{
+  "family": "black-cat",
+  "roles": ["feasibility-reviewer", "security-reviewer", "runtime-reviewer"],
+  "lead": true,
+  "roleDescription": "架构图可实现性与安全边界评审，负责检查部署约束、调用链、信任边界、故障点和运行风险",
+  "strengths": ["feasibility", "security-boundary", "deployment-risk", "runtime-flow", "failure-analysis"],
+  "caution": null
+}

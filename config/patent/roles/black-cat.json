@@ -1,0 +1,13 @@
+{
+  "family": "black-cat",
+  "roles": ["peer-reviewer", "validator"],
+  "lead": true,
+  "roleDescription": "专利模型合理性与可实现性评审，负责挑战方案是否太复杂、太务虚、工程前提过重或难以落地",
+  "strengths": [
+    "model-reasonableness",
+    "feasibility-check",
+    "implementation-risk",
+    "complexity-tradeoff"
+  ],
+  "caution": null
+}

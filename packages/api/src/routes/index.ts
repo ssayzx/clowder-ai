@@ -54,6 +54,7 @@ export { skillsRoutes } from './skills.js';
 export { sliceRoutes } from './slice-routes.js';
 export { summariesRoutes } from './summaries.js';
 export { tasksRoutes } from './tasks.js';
+export { teamsRoutes } from './teams.js';
 export { threadBranchRoutes } from './thread-branch.js';
 export { threadCatsRoutes } from './thread-cats.js';
 export { threadsRoutes } from './threads.js';

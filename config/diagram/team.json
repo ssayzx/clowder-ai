@@ -1,0 +1,15 @@
+{
+  "id": "diagram",
+  "displayName": "架构图团队",
+  "description": "协作梳理软件架构、模块边界、数据流、部署关系并产出可读架构图",
+  "members": ["big-orange", "black-cat", "cow-cat", "calico-cat"],
+  "roleDir": "roles",
+  "workflowDir": "workflow",
+  "governancePromptPath": "governance.md",
+  "reviewPolicy": {
+    "requireDifferentFamily": true,
+    "preferActiveInThread": true,
+    "preferLead": true,
+    "excludeUnavailable": true
+  }
+}

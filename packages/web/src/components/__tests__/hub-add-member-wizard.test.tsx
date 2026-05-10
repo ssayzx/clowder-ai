@@ -313,7 +313,7 @@ describe('HubAddMemberWizard', () => {
     await click(queryButton(container, 'Kimi'));
     expect(container.textContent).toContain('Kimi (OAuth)');
     expect(container.textContent).toContain('Moonshot Sponsor');
-    expect(container.textContent).not.toContain('Codex Sponsor');
+    expect(container.textContent).toContain('Codex Sponsor');
   });
 
   it('walks the Antigravity flow with default CLI args and lands in the editor', async () => {

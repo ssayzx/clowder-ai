@@ -1100,6 +1100,10 @@ describe('HubCatEditor', () => {
       'claude-sponsor',
       'codex-sponsor',
     ]);
+    expect(filterProfiles('kimi', profiles).map((profile) => profile.id)).toEqual([
+      'claude-sponsor',
+      'codex-sponsor',
+    ]);
   });
 
   it('preserves existing model when it is not listed in provider defaults', async () => {

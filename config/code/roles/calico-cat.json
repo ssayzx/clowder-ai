@@ -1,0 +1,8 @@
+{
+  "family": "calico",
+  "roles": ["logic-reviewer", "requirements-reviewer", "model-reviewer"],
+  "lead": false,
+  "roleDescription": "需求与逻辑一致性评审，负责检查功能边界、状态流、数据模型、异常路径和实现方案是否自洽",
+  "strengths": ["requirements-logic", "state-flow", "data-modeling", "edge-cases", "consistency-review"],
+  "caution": null
+}

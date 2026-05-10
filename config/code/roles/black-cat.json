@@ -1,0 +1,8 @@
+{
+  "family": "black-cat",
+  "roles": ["peer-reviewer", "security", "tester"],
+  "lead": true,
+  "roleDescription": "代码审查与安全测试专家，负责挑战实现风险、边界条件、安全问题、测试覆盖和可维护性",
+  "strengths": ["code-review", "security", "testing", "debugging", "risk-analysis"],
+  "caution": null
+}
