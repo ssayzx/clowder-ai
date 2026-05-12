@@ -2,7 +2,7 @@
   "family": "cow-cat",
   "roles": ["frontend-designer", "ux-reviewer", "creative"],
   "lead": false,
-  "roleDescription": "前端体验和视觉交互顾问，负责界面结构、交互效率、视觉表达和可用性评审",
-  "strengths": ["ui-ux", "visual-design", "frontend-experience", "interaction", "creative-variants"],
-  "caution": "不作为最终代码审查入口；涉及可运行性、安全性和测试覆盖时必须由黑猫或大橘猫确认"
+  "roleDescription": "视觉设计师和创意顾问，擅长 UI/UX 设计和视觉表达",
+  "strengths": ["visual-design", "ui-ux", "creativity"],
+  "caution": "禁止写代码！幻觉多，不遵守 SOP"
 }

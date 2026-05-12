@@ -1,6 +1,6 @@
 {
   "id": "code",
-  "displayName": "写代码团队",
+  "displayName": "代码团队",
   "description": "代码实现、架构拆解、代码审查、测试覆盖和前端体验协作团队",
   "members": ["big-orange", "black-cat", "cow-cat", "calico-cat"],
   "roleDir": "roles",
