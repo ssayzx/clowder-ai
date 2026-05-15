@@ -7,6 +7,40 @@ export const DEFAULT_TEAM_ID = 'default';
 
 const TEAM_ID_RE = /^[a-z][a-z0-9_-]*$/;
 
+const clientIdSchema = z.enum(['anthropic', 'openai', 'google', 'kimi', 'dare', 'antigravity', 'opencode', 'a2a']);
+
+const cliConfigSchema = z.object({
+  command: z.string().min(1),
+  outputFormat: z.string().min(1),
+  defaultArgs: z.array(z.string()).optional(),
+  effort: z.enum(['low', 'medium', 'high', 'max', 'xhigh']).optional(),
+});
+
+const contextBudgetSchema = z.object({
+  maxPromptTokens: z.number().positive().int(),
+  maxContextTokens: z.number().positive().int(),
+  maxMessages: z.number().positive().int(),
+  maxContentLengthPerMsg: z.number().positive().int(),
+});
+
+const modelConfigSchema = z.object({
+  clientId: clientIdSchema.optional(),
+  defaultModel: z.string().min(1).optional(),
+  accountRef: z.string().min(1).nullable().optional(),
+  mcpSupport: z.boolean().optional(),
+  cli: cliConfigSchema.optional(),
+  commandArgs: z.array(z.string().min(1)).optional(),
+  cliConfigArgs: z.array(z.string().min(1)).optional(),
+  contextBudget: contextBudgetSchema.optional(),
+  provider: z
+    .string()
+    .trim()
+    .min(1)
+    .refine((value) => !value.includes('/'), 'provider must be a bare provider id')
+    .nullable()
+    .optional(),
+});
+
 const rosterPatchSchema = z.object({
   family: z.string().min(1).optional(),
   roles: z.array(z.string().min(1)).optional(),
@@ -25,8 +59,10 @@ const rolePatchSchema = z
     workflowPromptPath: z.string().min(1).optional(),
     governancePromptPath: z.string().min(1).optional(),
     collaborationGroup: z.string().min(1).optional(),
+    modelConfig: modelConfigSchema.optional(),
     roster: rosterPatchSchema.optional(),
   })
+  .merge(modelConfigSchema)
   .merge(rosterPatchSchema);
 
 const teamProfileSchema = z.object({
@@ -64,6 +100,7 @@ export interface TeamProfileSummary {
 type TeamProfile = z.infer<typeof teamProfileSchema>;
 type RolePatch = z.infer<typeof rolePatchSchema>;
 type RosterPatch = z.infer<typeof rosterPatchSchema>;
+type ModelConfigPatch = z.infer<typeof modelConfigSchema>;
 type MutableRecord = Record<string, any>;
 
 interface LoadedTeamProfile {
@@ -242,6 +279,8 @@ function applyRolePatch(
     if (!patch.teamStrengths) delete target.teamStrengths;
   }
   if (patch.caution !== undefined) target.caution = patch.caution;
+  applyModelConfigPatch(target, patch);
+  if (patch.modelConfig) applyModelConfigPatch(target, patch.modelConfig);
   if (patch.workflowPromptPath) {
     target.workflowPromptPath = toProjectRelativePromptPath(projectRoot, teamDir, patch.workflowPromptPath);
     delete target.workflowPrompt;
@@ -251,6 +290,30 @@ function applyRolePatch(
     delete target.governancePrompt;
   }
   target.collaborationGroup = patch.collaborationGroup ?? teamId;
+}
+
+function applyModelConfigPatch(target: Record<string, unknown>, patch: ModelConfigPatch): void {
+  if (patch.clientId) target.clientId = patch.clientId;
+  if (patch.defaultModel) target.defaultModel = patch.defaultModel;
+  if (patch.accountRef !== undefined) {
+    if (patch.accountRef === null) delete target.accountRef;
+    else target.accountRef = patch.accountRef;
+  }
+  if (patch.mcpSupport !== undefined) target.mcpSupport = patch.mcpSupport;
+  if (patch.cli) target.cli = patch.cli;
+  if (patch.commandArgs) {
+    if (patch.commandArgs.length > 0) target.commandArgs = patch.commandArgs;
+    else delete target.commandArgs;
+  }
+  if (patch.cliConfigArgs) {
+    if (patch.cliConfigArgs.length > 0) target.cliConfigArgs = patch.cliConfigArgs;
+    else delete target.cliConfigArgs;
+  }
+  if (patch.contextBudget) target.contextBudget = patch.contextBudget;
+  if (patch.provider !== undefined) {
+    if (patch.provider === null) delete target.provider;
+    else target.provider = patch.provider;
+  }
 }
 
 export function getActiveTeamId(): string {

@@ -55,8 +55,10 @@ export function TeamSwitcher() {
       if (!res.ok) throw new Error('team switch failed');
       const data = (await res.json().catch(() => ({}))) as TeamsResponse;
       setTeams(data.teams ?? teams);
-      setActiveTeamId(data.activeTeamId ?? teamId);
-      await refresh();
+      const nextTeamId = data.activeTeamId ?? teamId;
+      setActiveTeamId(nextTeamId);
+      const cats = await refresh();
+      window.dispatchEvent(new CustomEvent('cat-team-changed', { detail: { teamId: nextTeamId, cats } }));
     } catch {
       setActiveTeamId(previous);
     } finally {

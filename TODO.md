@@ -1,6 +1,8 @@
 ### start
 
 nvm use system # 切换回系统node 20
+pnpm start:direct -- --profile=production # 编译后启动
+pnpm start:direct -- --profile=production --quick # 不编译直接启动
 
 ### tips
 #### 持久化

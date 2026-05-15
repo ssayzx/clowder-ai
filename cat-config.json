@@ -946,7 +946,6 @@
         "secondary": "#FFE4D1"
       },
       "mentionPatterns": [
-        "@opus4-6",
         "@大橘猫",
         "@大橘",
         "@big-orange",
@@ -1002,7 +1001,6 @@
         "secondary": "#4A4A4A"
       },
       "mentionPatterns": [
-        "@gpt5-4",
         "@玄猫",
         "@玄猫喵",
         "@black-cat",
@@ -1058,7 +1056,6 @@
         "secondary": "#FFFFFF"
       },
       "mentionPatterns": [
-        "@gemini3-1",
         "@奶牛猫",
         "@奶牛",
         "@cow-cat",
@@ -1124,7 +1121,6 @@
         "secondary": "#FFF3E0"
       },
       "mentionPatterns": [
-        "@kimi2-6",
         "@三花猫",
         "@三花",
         "@calico-cat",

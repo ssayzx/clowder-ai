@@ -1,0 +1,33 @@
+{
+  "family": "cow-cat",
+  "roles": ["experience-reviewer", "interaction-reviewer", "clarity-reviewer", "reader-journey-reviewer"],
+  "lead": false,
+  "roleDescription": "读者视角、体验与表达评审，负责检查设计文档是否面向真实用户场景，概念解释是否清楚，信息层级是否易读，关键流程、界面状态、异常状态、交互说明以及用户流程图/状态图等表达是否完整",
+  "strengths": [
+    "user-experience",
+    "reader-journey",
+    "diagram-clarity",
+    "information-architecture",
+    "interaction-flow",
+    "state-coverage",
+    "visual-clarity",
+    "scenario-fit"
+  ],
+  "modelConfig": {
+    "clientId": "google",
+    "defaultModel": "gemini-3.1-pro-preview",
+    "accountRef": "gemini",
+    "mcpSupport": true,
+    "cli": {
+      "command": "gemini",
+      "outputFormat": "stream-json",
+      "defaultArgs": []
+    },
+    "contextBudget": {
+      "maxPromptTokens": 350000,
+      "maxContextTokens": 300000,
+      "maxMessages": 300,
+      "maxContentLengthPerMsg": 15000
+    }
+  }
+}

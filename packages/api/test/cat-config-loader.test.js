@@ -234,6 +234,8 @@ describe('cat-config-loader', () => {
         gemini: { family: 'siamese', roles: ['designer'], lead: true, available: true, evaluation: 'legacy' },
       };
       cfg.breeds[0].teamConfigPath = 'config/patent/team.json';
+      cfg.breeds[0].variants[0].accountRef = 'template-opus-account';
+      cfg.breeds[0].variants[1].accountRef = 'template-opus-45-account';
       delete cfg.breeds[0].roleDescription;
 
       const { dir, path } = writeTempProjectConfig(cfg);
@@ -258,6 +260,16 @@ describe('cat-config-loader', () => {
         JSON.stringify({
           roleDescription: '专利主笔',
           strengths: ['drafting', 'claim-framing'],
+          modelConfig: {
+            defaultModel: 'team-opus-model',
+            accountRef: 'team-opus-account',
+            contextBudget: {
+              maxPromptTokens: 9000,
+              maxContextTokens: 8000,
+              maxMessages: 90,
+              maxContentLengthPerMsg: 700,
+            },
+          },
           roles: ['patent-drafter'],
           lead: true,
         }),
@@ -275,10 +287,20 @@ describe('cat-config-loader', () => {
       assert.equal(all.opus.roleDescription, '专利主笔');
       assert.equal(all.opus.personality, '');
       assert.deepEqual(all.opus.strengths, ['drafting', 'claim-framing']);
+      assert.equal(all.opus.defaultModel, 'team-opus-model');
+      assert.equal(all.opus.accountRef, 'team-opus-account');
+      assert.deepEqual(all.opus.contextBudget, {
+        maxPromptTokens: 9000,
+        maxContextTokens: 8000,
+        maxMessages: 90,
+        maxContentLengthPerMsg: 700,
+      });
       assert.equal(all.opus.workflowPrompt, 'patent opus workflow');
       assert.equal(all.opus.governancePrompt, 'patent governance');
       assert.equal(all.opus.collaborationGroup, 'patent');
       assert.equal(all['opus-45'].roleDescription, '专利评审');
+      assert.equal(all['opus-45'].defaultModel, 'claude-sonnet-4-5-20250929');
+      assert.equal(all['opus-45'].accountRef, 'template-opus-45-account');
       assert.equal(all['opus-45'].workflowPrompt, 'patent opus-45 workflow');
       assert.equal(all.gemini.roleDescription, '视觉设计');
       assert.deepEqual(config.roster?.opus.roles, ['patent-drafter']);

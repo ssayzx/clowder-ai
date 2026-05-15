@@ -1,0 +1,35 @@
+{
+  "family": "black-cat",
+  "roles": ["engineering-reviewer", "risk-reviewer", "feasibility-reviewer", "design-doc-completeness-reviewer"],
+  "lead": false,
+  "roleDescription": "工程合理性与设计文档完备性评审，负责挑战方案复杂度、实现成本、安全风险、数据边界、失败路径、测试策略、迁移兼容和可维护性，并检查文档及架构图/数据流图/时序图是否足以支撑后续实现",
+  "strengths": [
+    "feasibility-check",
+    "security-review",
+    "testing-strategy",
+    "architecture-diagram-review",
+    "failure-path-review",
+    "compatibility-review",
+    "complexity-control",
+    "maintainability",
+    "document-completeness"
+  ],
+  "caution": null,
+  "modelConfig": {
+    "clientId": "anthropic",
+    "defaultModel": "Kimi-K2.6",
+    "accountRef": "ark-anthropic",
+    "mcpSupport": true,
+    "cli": {
+      "command": "kimi",
+      "outputFormat": "stream-json",
+      "defaultArgs": ["--print", "--output-format", "stream-json"]
+    },
+    "contextBudget": {
+      "maxPromptTokens": 240000,
+      "maxContextTokens": 216000,
+      "maxMessages": 200,
+      "maxContentLengthPerMsg": 10000
+    }
+  }
+}

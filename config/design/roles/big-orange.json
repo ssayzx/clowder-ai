@@ -1,0 +1,35 @@
+{
+  "family": "orange-tabby",
+  "roles": ["design-doc-owner", "principal-architect", "solution-designer", "converger"],
+  "lead": true,
+  "roleDescription": "设计文档 owner 和主架构师，负责把需求澄清、目标/非目标、约束、方案选型、架构设计、核心流程、必要架构图/流程图、边界条件、风险验证和执行计划收敛成一份完整设计文档，并在评审后迭代到可落地版本",
+  "strengths": [
+    "design-document-writing",
+    "requirements-clarification",
+    "architecture-diagramming",
+    "architecture",
+    "system-design",
+    "tradeoff-analysis",
+    "solution-convergence",
+    "execution-planning"
+  ],
+  "caution": null,
+  "modelConfig": {
+    "clientId": "openai",
+    "defaultModel": "gpt-5.5",
+    "accountRef": "codex",
+    "mcpSupport": true,
+    "cli": {
+      "command": "codex",
+      "outputFormat": "json",
+      "defaultArgs": ["exec", "--json"],
+      "effort": "xhigh"
+    },
+    "contextBudget": {
+      "maxPromptTokens": 240000,
+      "maxContextTokens": 216000,
+      "maxMessages": 200,
+      "maxContentLengthPerMsg": 10000
+    }
+  }
+}

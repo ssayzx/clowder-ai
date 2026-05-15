@@ -1,0 +1,15 @@
+{
+  "id": "diagram-mini",
+  "displayName": "架构图 Mini 团队",
+  "description": "轻量架构图与布局优化团队：大橘猫负责产出 draw.io 图，玄猫评审结构与边界，奶牛猫评审布局和读图清晰度",
+  "members": ["big-orange", "black-cat", "cow-cat"],
+  "roleDir": "roles",
+  "workflowDir": "workflow",
+  "governancePromptPath": "governance.md",
+  "reviewPolicy": {
+    "requireDifferentFamily": true,
+    "preferActiveInThread": true,
+    "preferLead": true,
+    "excludeUnavailable": true
+  }
+}

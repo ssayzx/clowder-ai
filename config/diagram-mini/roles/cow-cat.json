@@ -1,0 +1,34 @@
+{
+  "family": "cow-cat",
+  "roles": ["layout-reviewer", "visual-clarity-reviewer", "reader-path-reviewer"],
+  "lead": false,
+  "roleDescription": "布局与读图清晰度评审，负责检查 draw.io 图的视觉层级、对齐、留白、分组、图例、标签、箭头走向、读图路径和多页面拆分是否清晰明了",
+  "strengths": [
+    "diagram-layout",
+    "visual-hierarchy",
+    "readability",
+    "label-clarity",
+    "grouping-design",
+    "reader-journey",
+    "notation-consistency",
+    "presentation-polish"
+  ],
+  "caution": "不能为了美化牺牲架构语义；任何视觉简化都必须保留节点、边和边界的真实含义",
+  "modelConfig": {
+    "clientId": "google",
+    "defaultModel": "gemini-3.1-pro-preview",
+    "accountRef": "gemini",
+    "mcpSupport": true,
+    "cli": {
+      "command": "gemini",
+      "outputFormat": "stream-json",
+      "defaultArgs": []
+    },
+    "contextBudget": {
+      "maxPromptTokens": 350000,
+      "maxContextTokens": 300000,
+      "maxMessages": 300,
+      "maxContentLengthPerMsg": 15000
+    }
+  }
+}

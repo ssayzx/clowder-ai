@@ -132,15 +132,6 @@
       "lead": false,
       "available": false,
       "evaluation": "孟加拉猫 runtime member"
-    },
-    "calico-cat": {
-      "family": "calico",
-      "roles": [
-        "assistant"
-      ],
-      "lead": false,
-      "available": true,
-      "evaluation": "三花猫 runtime member"
     }
   },
   "reviewPolicy": {
@@ -993,14 +984,7 @@
           },
           "source": "seed",
           "accountRef": "coderelay",
-          "sessionChain": true,
-          "roleDescription": "主架构师和核心开发者，擅长深度思考和系统设计",
-          "caution": null,
-          "strengths": [
-            "architecture",
-            "backend",
-            "mcp"
-          ]
+          "sessionChain": true
         }
       ],
       "teamConfigPath": "config/patent/team.json"
@@ -1055,15 +1039,7 @@
           },
           "source": "seed",
           "accountRef": "codex",
-          "sessionChain": true,
-          "roleDescription": "专利模型合理性与可实现性评审，负责挑战方案是否太复杂、太务虚、工程前提过重或难以落地",
-          "caution": null,
-          "strengths": [
-            "model-reasonableness",
-            "feasibility-check",
-            "implementation-risk",
-            "complexity-tradeoff"
-          ]
+          "sessionChain": true
         }
       ],
       "teamConfigPath": "config/patent/team.json"
@@ -1128,15 +1104,7 @@
           },
           "source": "seed",
           "accountRef": "gemini",
-          "sessionChain": true,
-          "roleDescription": "专利创新性与保护空间评审，思维发散，负责挑战创新高度、寻找绕开路径、扩展从属方案和保护范围",
-          "caution": "容易发散过头，需要大橘猫裁决取舍，并由玄猫/三花校验合理性",
-          "strengths": [
-            "innovation-review",
-            "protection-scope",
-            "design-around-analysis",
-            "dependent-claim-ideas"
-          ]
+          "sessionChain": true
         }
       ],
       "teamConfigPath": "config/patent/team.json"
@@ -1191,15 +1159,7 @@
           },
           "source": "seed",
           "accountRef": "kimi",
-          "sessionChain": true,
-          "roleDescription": "专利模型合理性与逻辑完备自洽评审，负责挑战概念定义、因果链、模块关系、边界条件和推导是否闭合",
-          "caution": null,
-          "strengths": [
-            "logic-completeness",
-            "model-consistency",
-            "causal-chain-review",
-            "boundary-condition-analysis"
-          ]
+          "sessionChain": true
         }
       ],
       "teamConfigPath": "config/patent/team.json"
