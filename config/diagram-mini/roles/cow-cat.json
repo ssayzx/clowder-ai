@@ -1,6 +1,25 @@
 {
   "family": "cow-cat",
-  "roles": ["layout-reviewer", "visual-clarity-reviewer", "reader-path-reviewer"],
+  "name": "奶牛猫",
+  "displayName": "奶牛猫",
+  "nickname": "奶牛猫",
+  "avatar": "/uploads/screenshot-1776503804442-b27f53bb.png",
+  "color": {
+    "primary": "#2D2D2D",
+    "secondary": "#FFFFFF"
+  },
+  "mentionPatterns": [
+    "@奶牛猫",
+    "@奶牛",
+    "@cow-cat",
+    "@cow"
+  ],
+  "defaultVariantId": "cow-cat-default",
+  "roles": [
+    "layout-reviewer",
+    "visual-clarity-reviewer",
+    "reader-path-reviewer"
+  ],
   "lead": false,
   "roleDescription": "布局与读图清晰度评审，负责检查 draw.io 图的视觉层级、对齐、留白、分组、图例、标签、箭头走向、读图路径和多页面拆分是否清晰明了",
   "strengths": [
@@ -23,6 +42,22 @@
       "command": "gemini",
       "outputFormat": "stream-json",
       "defaultArgs": []
+    },
+    "acp": {
+      "command": "gemini",
+      "startupArgs": [
+        "--acp",
+        "--approval-mode",
+        "yolo"
+      ],
+      "mcpWhitelist": [
+        "cat-cafe",
+        "cat-cafe-memory",
+        "cat-cafe-collab",
+        "cat-cafe-signals",
+        "pencil"
+      ],
+      "supportsMultiplexing": true
     },
     "contextBudget": {
       "maxPromptTokens": 350000,

@@ -242,6 +242,11 @@ function buildProviderSuggestions(models: string[]): string[] {
   return [...seen].sort();
 }
 
+function accountOptionLabel(profile: ProfileItem): string {
+  const kind = profile.builtin ? '内置' : 'API Key';
+  return `${profile.displayName}（${kind}） · ${profile.id}`;
+}
+
 function ComboField({
   label,
   ariaLabel,
@@ -259,27 +264,40 @@ function ComboField({
   required?: boolean;
   placeholder?: string;
 }) {
-  const listId = `combo-${label.replace(/\s+/g, '-').toLowerCase()}`;
+  const normalizedSuggestions = Array.from(new Set(suggestions.map((item) => item.trim()).filter(Boolean)));
+  const suggestionValue = normalizedSuggestions.includes(value) ? value : '';
+  const fieldLabel = ariaLabel ?? label;
   return (
     <label className="flex flex-col gap-1.5 text-[#5C4B42] sm:flex-row sm:items-center sm:gap-3">
       <span className="text-[13px] font-semibold text-[#8A776B] sm:w-[140px] sm:shrink-0">
         {label}
         {required && <span className="ml-0.5 text-[#E29578]">*</span>}
       </span>
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 space-y-2">
+        {normalizedSuggestions.length > 0 ? (
+          <select
+            aria-label={`${fieldLabel} options`}
+            value={suggestionValue}
+            onChange={(event) => {
+              if (event.target.value) onChange(event.target.value);
+            }}
+            className="w-full rounded-[10px] border border-[#E8DCCF] bg-[#FFFDFC] px-3.5 py-2 text-[14px] leading-5 text-[#2D2118] outline-none transition focus:border-[#D49266] focus:ring-2 focus:ring-[#F5D2B8]"
+          >
+            <option value="">{value.trim() ? '当前为自定义值' : '选择已有项'}</option>
+            {normalizedSuggestions.map((suggestion) => (
+              <option key={suggestion} value={suggestion}>
+                {suggestion}
+              </option>
+            ))}
+          </select>
+        ) : null}
         <input
-          aria-label={ariaLabel ?? label}
+          aria-label={fieldLabel}
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          list={listId}
           className="w-full rounded-[10px] border border-[#E8DCCF] bg-[#F7F3F0] px-3.5 py-2 text-[14px] leading-5 text-[#2D2118] placeholder:text-[#C4B5A8] outline-none transition focus:border-[#D49266] focus:ring-2 focus:ring-[#F5D2B8]"
           placeholder={placeholder}
         />
-        <datalist id={listId}>
-          {suggestions.map((s) => (
-            <option key={s} value={s} />
-          ))}
-        </datalist>
       </div>
     </label>
   );
@@ -406,7 +424,7 @@ export function AccountSection({
                   })
                   .map((profile) => ({
                     value: profile.id,
-                    label: profile.builtin ? `${profile.displayName}（内置）` : `${profile.displayName}（API Key）`,
+                    label: accountOptionLabel(profile),
                   })),
               ]}
               onChange={(value) => onChange({ accountRef: value, defaultModel: '', provider: '' })}

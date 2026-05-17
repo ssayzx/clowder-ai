@@ -1,6 +1,25 @@
 {
   "family": "black-cat",
-  "roles": ["architecture-semantic-reviewer", "boundary-reviewer", "drawio-validity-reviewer"],
+  "name": "玄猫",
+  "displayName": "玄猫",
+  "nickname": "玄猫喵",
+  "avatar": "/uploads/screenshot-1776499286518-b8f4d82e.jpg",
+  "color": {
+    "primary": "#1A1A1A",
+    "secondary": "#4A4A4A"
+  },
+  "mentionPatterns": [
+    "@玄猫",
+    "@玄猫喵",
+    "@black-cat",
+    "@black"
+  ],
+  "defaultVariantId": "black-cat-default",
+  "roles": [
+    "architecture-semantic-reviewer",
+    "boundary-reviewer",
+    "drawio-validity-reviewer"
+  ],
   "lead": false,
   "roleDescription": "架构语义和可落地性评审，负责检查 draw.io 图中的系统边界、模块职责、调用链、数据流、部署/信任边界、失败路径和 XML 可导入性是否支撑真实实现",
   "strengths": [
@@ -22,7 +41,11 @@
     "cli": {
       "command": "kimi",
       "outputFormat": "stream-json",
-      "defaultArgs": ["--print", "--output-format", "stream-json"]
+      "defaultArgs": [
+        "--print",
+        "--output-format",
+        "stream-json"
+      ]
     },
     "contextBudget": {
       "maxPromptTokens": 240000,

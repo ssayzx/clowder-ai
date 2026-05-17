@@ -24,7 +24,7 @@ import { type ClientId, createCatId, normalizeCliEffortForProvider } from '@cat-
 import { z } from 'zod';
 import { createModuleLogger } from '../infrastructure/logger.js';
 import { bootstrapCatCatalog, readCatCatalogRaw, resolveCatCatalogPath } from './cat-catalog-store.js';
-import { applyReferencedTeamProfiles, applyTeamProfile, getActiveTeamId } from './team-config.js';
+import { applyReferencedTeamProfiles, applyTeamProfile, getActiveTeamId, getTeamAcpConfig } from './team-config.js';
 
 const log = createModuleLogger('cat-config');
 
@@ -832,6 +832,8 @@ export function getAcpConfig(catId: string): AcpVariantConfig | undefined {
   try {
     const templatePath = process.env.CAT_TEMPLATE_PATH ?? DEFAULT_CAT_TEMPLATE_PATH;
     const projectRoot = dirname(templatePath);
+    const teamAcpConfig = getTeamAcpConfig(projectRoot, getActiveTeamId(), catId);
+    if (teamAcpConfig) return teamAcpConfig;
     const catalogRaw = readCatCatalogRaw(projectRoot);
     let raw: string;
     if (catalogRaw !== null) {

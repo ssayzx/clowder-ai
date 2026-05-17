@@ -1,6 +1,24 @@
 {
   "family": "orange-tabby",
-  "roles": ["architect", "converger"],
+  "name": "大橘猫",
+  "displayName": "大橘猫",
+  "nickname": "大橘喵",
+  "avatar": "/uploads/screenshot-1776499278298-7f4fca4b.jpg",
+  "color": {
+    "primary": "#FF8C42",
+    "secondary": "#FFE4D1"
+  },
+  "mentionPatterns": [
+    "@大橘猫",
+    "@大橘",
+    "@big-orange",
+    "@orange"
+  ],
+  "defaultVariantId": "big-orange-default",
+  "roles": [
+    "architect",
+    "converger"
+  ],
   "lead": true,
   "roleDescription": "专利主笔起草人，负责理解原始idea、起草底稿、组织三方评审、逐条吸收反馈并完成最终定稿",
   "strengths": [
@@ -10,5 +28,26 @@
     "convergence",
     "claim-framing"
   ],
-  "caution": null
+  "caution": null,
+  "modelConfig": {
+    "clientId": "openai",
+    "defaultModel": "gpt-5.5",
+    "accountRef": "codex",
+    "mcpSupport": true,
+    "cli": {
+      "command": "codex",
+      "outputFormat": "json",
+      "defaultArgs": [
+        "exec",
+        "--json"
+      ],
+      "effort": "xhigh"
+    },
+    "contextBudget": {
+      "maxPromptTokens": 240000,
+      "maxContextTokens": 216000,
+      "maxMessages": 200,
+      "maxContentLengthPerMsg": 10000
+    }
+  }
 }

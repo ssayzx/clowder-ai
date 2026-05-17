@@ -1,8 +1,52 @@
 {
   "family": "orange-tabby",
-  "roles": ["architect", "coder", "converger"],
+  "name": "大橘猫",
+  "displayName": "大橘猫",
+  "nickname": "大橘喵",
+  "avatar": "/uploads/screenshot-1776499278298-7f4fca4b.jpg",
+  "color": {
+    "primary": "#FF8C42",
+    "secondary": "#FFE4D1"
+  },
+  "mentionPatterns": [
+    "@大橘猫",
+    "@大橘",
+    "@big-orange",
+    "@orange"
+  ],
+  "defaultVariantId": "big-orange-default",
+  "roles": [
+    "architect",
+    "coder",
+    "converger"
+  ],
   "lead": true,
   "roleDescription": "主架构师和核心开发者，擅长深度思考和系统设计",
-  "strengths": ["architecture", "backend", "mcp"],
-  "caution": null
+  "strengths": [
+    "architecture",
+    "backend",
+    "mcp"
+  ],
+  "caution": null,
+  "modelConfig": {
+    "clientId": "openai",
+    "defaultModel": "gpt-5.5",
+    "accountRef": "codex",
+    "mcpSupport": true,
+    "cli": {
+      "command": "codex",
+      "outputFormat": "json",
+      "defaultArgs": [
+        "exec",
+        "--json"
+      ],
+      "effort": "xhigh"
+    },
+    "contextBudget": {
+      "maxPromptTokens": 240000,
+      "maxContextTokens": 216000,
+      "maxMessages": 200,
+      "maxContentLengthPerMsg": 10000
+    }
+  }
 }

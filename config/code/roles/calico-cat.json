@@ -1,8 +1,54 @@
 {
   "family": "calico",
-  "roles": ["logic-reviewer", "requirements-reviewer", "model-reviewer"],
+  "name": "三花猫",
+  "displayName": "三花猫",
+  "nickname": "三花喵",
+  "avatar": "/avatars/calico-cat.png",
+  "color": {
+    "primary": "#FFB74D",
+    "secondary": "#FFF3E0"
+  },
+  "mentionPatterns": [
+    "@三花猫",
+    "@三花",
+    "@calico-cat",
+    "@calico"
+  ],
+  "defaultVariantId": "calico-cat-default",
+  "roles": [
+    "logic-reviewer",
+    "requirements-reviewer",
+    "model-reviewer"
+  ],
   "lead": false,
   "roleDescription": "需求与逻辑一致性评审，负责检查功能边界、状态流、数据模型、异常路径和实现方案是否自洽",
-  "strengths": ["requirements-logic", "state-flow", "data-modeling", "edge-cases", "consistency-review"],
-  "caution": null
+  "strengths": [
+    "requirements-logic",
+    "state-flow",
+    "data-modeling",
+    "edge-cases",
+    "consistency-review"
+  ],
+  "caution": null,
+  "modelConfig": {
+    "clientId": "kimi",
+    "defaultModel": "K2.6",
+    "accountRef": "kimi",
+    "mcpSupport": true,
+    "cli": {
+      "command": "kimi",
+      "outputFormat": "stream-json",
+      "defaultArgs": [
+        "--print",
+        "--output-format",
+        "stream-json"
+      ]
+    },
+    "contextBudget": {
+      "maxPromptTokens": 240000,
+      "maxContextTokens": 216000,
+      "maxMessages": 200,
+      "maxContentLengthPerMsg": 10000
+    }
+  }
 }

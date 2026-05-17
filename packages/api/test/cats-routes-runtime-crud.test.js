@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { after, afterEach, beforeEach, describe, it } from 'node:test';
@@ -13,6 +13,7 @@ const { parseA2AMentions } = await import('../dist/domains/cats/services/agents/
 const { _clearRuntimeOverrides, getRuntimeOverride, setRuntimeOverride } = await import(
   '../dist/config/session-strategy-overrides.js'
 );
+const { DEFAULT_TEAM_ID, setActiveTeamId } = await import('../dist/config/team-config.js');
 
 const tempDirs = [];
 let savedTemplatePath;
@@ -97,6 +98,55 @@ function createProjectRootFromRepoTemplate() {
   return projectRoot;
 }
 
+function createProjectRootWithConfigTeam() {
+  const projectRoot = createProjectRoot();
+  process.env.CAT_TEMPLATE_PATH = join(projectRoot, 'cat-template.json');
+  const teamDir = join(projectRoot, 'config', 'code-mini');
+  const roleDir = join(teamDir, 'roles');
+  mkdirSync(roleDir, { recursive: true });
+  writeFileSync(
+    join(teamDir, 'team.json'),
+    JSON.stringify(
+      {
+        id: 'code-mini',
+        displayName: '代码 Mini 团队',
+        members: ['big-orange'],
+        roleDir: 'roles',
+        governancePromptPath: 'governance.md',
+      },
+      null,
+      2,
+    ),
+  );
+  writeFileSync(join(teamDir, 'governance.md'), '## 家规\n- 测试团队。\n');
+  writeFileSync(
+    join(roleDir, 'big-orange.json'),
+    JSON.stringify(
+      {
+        family: 'orange-tabby',
+        roles: ['architect', 'coder'],
+        lead: true,
+        name: '大橘猫',
+        displayName: '大橘猫',
+        avatar: '/avatars/big-orange.png',
+        color: { primary: '#FF8C42', secondary: '#FFE4D1' },
+        mentionPatterns: ['@big-orange', '@大橘猫'],
+        roleDescription: '主实现',
+        modelConfig: {
+          clientId: 'openai',
+          defaultModel: 'gpt-5.5',
+          accountRef: 'codex',
+          mcpSupport: true,
+          cli: { command: 'codex', outputFormat: 'json', defaultArgs: ['exec', '--json'], effort: 'xhigh' },
+        },
+      },
+      null,
+      2,
+    ),
+  );
+  return projectRoot;
+}
+
 describe('cats routes runtime CRUD', { concurrency: false }, () => {
   /** @type {string | undefined} */ let savedGlobalRoot;
 
@@ -105,6 +155,7 @@ describe('cats routes runtime CRUD', { concurrency: false }, () => {
     savedGlobalRoot = process.env.CAT_CAFE_GLOBAL_CONFIG_ROOT;
     resetRegistryToBuiltins();
     _clearRuntimeOverrides();
+    setActiveTeamId(process.cwd(), DEFAULT_TEAM_ID);
   });
 
   afterEach(() => {
@@ -117,6 +168,7 @@ describe('cats routes runtime CRUD', { concurrency: false }, () => {
     }
     resetRegistryToBuiltins();
     _clearRuntimeOverrides();
+    setActiveTeamId(process.cwd(), DEFAULT_TEAM_ID);
   });
 
   after(() => {
@@ -268,6 +320,47 @@ describe('cats routes runtime CRUD', { concurrency: false }, () => {
 
     const mentions = parseA2AMentions('@运行时火花 请跟进这个分支', createCatId('opus'));
     assert.ok(mentions.includes('runtime-spark'), 'new alias should route immediately');
+  });
+
+  it('PATCH /api/cats/:id writes active config team role files instead of runtime catalog', async () => {
+    const projectRoot = createProjectRootWithConfigTeam();
+    setActiveTeamId(projectRoot, 'code-mini');
+
+    const Fastify = (await import('fastify')).default;
+    const { catsRoutes } = await import('../dist/routes/cats.js');
+
+    const app = Fastify();
+    await app.register(catsRoutes);
+
+    const patchRes = await app.inject({
+      method: 'PATCH',
+      url: '/api/cats/big-orange',
+      headers: {
+        'content-type': 'application/json',
+        'x-cat-cafe-user': 'codex',
+      },
+      body: JSON.stringify({
+        displayName: '代码大橘',
+        nickname: '大橘',
+        mentionPatterns: ['@big-orange', '@代码大橘'],
+        defaultModel: 'gpt-5.4',
+        cli: { effort: 'high' },
+        teamStrengths: '主实现与收敛',
+      }),
+    });
+    assert.equal(patchRes.statusCode, 200);
+    assert.equal(JSON.parse(patchRes.body).cat.source, 'config');
+
+    const role = JSON.parse(readFileSync(join(projectRoot, 'config', 'code-mini', 'roles', 'big-orange.json'), 'utf8'));
+    assert.equal(role.displayName, '代码大橘');
+    assert.equal(role.nickname, '大橘');
+    assert.deepEqual(role.mentionPatterns, ['@big-orange', '@代码大橘']);
+    assert.equal(role.teamStrengths, '主实现与收敛');
+    assert.equal(role.modelConfig.defaultModel, 'gpt-5.4');
+    assert.equal(role.modelConfig.cli.effort, 'high');
+
+    const catalog = JSON.parse(readFileSync(join(projectRoot, '.cat-cafe', 'cat-catalog.json'), 'utf8'));
+    assert.equal(catalog.breeds.some((breed) => breed.catId === 'big-orange'), false);
   });
 
   it('POST /api/cats persists structured cli.effort for Codex members', async () => {
@@ -1490,6 +1583,7 @@ describe('cats routes runtime CRUD', { concurrency: false }, () => {
       },
       body: JSON.stringify({
         clientId: 'openai',
+        accountRef: 'codex',
         defaultModel: 'gpt-5.4',
       }),
     });

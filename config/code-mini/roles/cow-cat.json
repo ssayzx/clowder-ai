@@ -16,18 +16,23 @@
   ],
   "defaultVariantId": "cow-cat-default",
   "roles": [
-    "innovator",
-    "creative"
+    "frontend-designer",
+    "ux-reviewer",
+    "interaction-reviewer",
+    "clarity-reviewer"
   ],
-  "lead": true,
-  "roleDescription": "专利创新性与保护空间评审，思维发散，负责挑战创新高度、寻找绕开路径、扩展从属方案和保护范围",
+  "lead": false,
+  "roleDescription": "前端体验、交互和表达评审，负责检查真实用户场景、信息架构、界面状态、响应式布局、文本可读性、操作效率和视觉清晰度",
   "strengths": [
-    "innovation-review",
-    "protection-scope",
-    "design-around-analysis",
-    "dependent-claim-ideas"
+    "visual-design",
+    "ui-ux",
+    "interaction-flow",
+    "information-architecture",
+    "responsive-layout",
+    "copy-clarity",
+    "state-coverage"
   ],
-  "caution": "容易发散过头，需要大橘猫裁决取舍，并由玄猫/三花校验合理性",
+  "caution": "禁止独立提交业务代码；前端体验建议必须交由大橘猫或玄猫确认可运行性、安全性和测试覆盖",
   "modelConfig": {
     "clientId": "google",
     "defaultModel": "gemini-3.1-pro-preview",

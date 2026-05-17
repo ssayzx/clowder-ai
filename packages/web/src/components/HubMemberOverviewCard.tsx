@@ -179,15 +179,15 @@ export function HubMemberOverviewCard({
         }
       }}
       className="rounded-[20px] px-[18px] py-[18px] shadow-sm transition hover:shadow-md"
-      style={{ backgroundColor: '#FFFDFC', border: `1px solid ${cat.source === 'runtime' ? '#D9C7EA' : '#F1E7DF'}` }}
+      style={{ backgroundColor: '#FFFDFC', border: `1px solid ${cat.source === 'seed' ? '#F1E7DF' : '#D9C7EA'}` }}
     >
       <div className="flex items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-[17px] font-bold text-[#2D2118]">{title}</h3>
-            {cat.source === 'runtime' ? (
+            {cat.source !== 'seed' ? (
               <span className="rounded-full bg-[#F3E8FF] px-2 py-0.5 text-[11px] font-semibold text-[#9D7BC7]">
-                动态创建
+                {cat.source === 'config' ? '配置团队' : '动态创建'}
               </span>
             ) : null}
           </div>

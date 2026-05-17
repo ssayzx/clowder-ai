@@ -1,6 +1,6 @@
 {
-  "id": "design",
-  "displayName": "设计团队",
+  "id": "design-mini",
+  "displayName": "设计 Mini 团队",
   "description": "方案设计团队：大橘猫负责主架构与方案收敛，玄猫和奶牛猫分别从工程合理性与体验表达角度评审，最终输出完备、合理、可落地的方案",
   "members": ["big-orange", "black-cat", "cow-cat"],
   "roleDir": "roles",

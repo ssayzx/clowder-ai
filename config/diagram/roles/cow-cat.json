@@ -1,8 +1,66 @@
 {
   "family": "cow-cat",
-  "roles": ["diagram-designer", "visual-communicator", "layout-reviewer"],
+  "name": "奶牛猫",
+  "displayName": "奶牛猫",
+  "nickname": "奶牛猫",
+  "avatar": "/uploads/screenshot-1776503804442-b27f53bb.png",
+  "color": {
+    "primary": "#2D2D2D",
+    "secondary": "#FFFFFF"
+  },
+  "mentionPatterns": [
+    "@奶牛猫",
+    "@奶牛",
+    "@cow-cat",
+    "@cow"
+  ],
+  "defaultVariantId": "cow-cat-default",
+  "roles": [
+    "diagram-designer",
+    "visual-communicator",
+    "layout-reviewer"
+  ],
   "lead": false,
   "roleDescription": "架构图视觉表达设计者，负责布局层次、图例、视觉分组、读图路径和多图拆分建议",
-  "strengths": ["diagram-layout", "visual-hierarchy", "notation", "readability", "presentation"],
-  "caution": "不能为了好看牺牲架构语义；所有视觉简化必须由大橘猫或三花猫确认不会改变含义"
+  "strengths": [
+    "diagram-layout",
+    "visual-hierarchy",
+    "notation",
+    "readability",
+    "presentation"
+  ],
+  "caution": "不能为了好看牺牲架构语义；所有视觉简化必须由大橘猫或三花猫确认不会改变含义",
+  "modelConfig": {
+    "clientId": "google",
+    "defaultModel": "gemini-3.1-pro-preview",
+    "accountRef": "gemini",
+    "mcpSupport": true,
+    "cli": {
+      "command": "gemini",
+      "outputFormat": "stream-json",
+      "defaultArgs": []
+    },
+    "acp": {
+      "command": "gemini",
+      "startupArgs": [
+        "--acp",
+        "--approval-mode",
+        "yolo"
+      ],
+      "mcpWhitelist": [
+        "cat-cafe",
+        "cat-cafe-memory",
+        "cat-cafe-collab",
+        "cat-cafe-signals",
+        "pencil"
+      ],
+      "supportsMultiplexing": true
+    },
+    "contextBudget": {
+      "maxPromptTokens": 350000,
+      "maxContextTokens": 300000,
+      "maxMessages": 300,
+      "maxContentLengthPerMsg": 15000
+    }
+  }
 }

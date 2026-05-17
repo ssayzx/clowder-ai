@@ -1,8 +1,64 @@
 {
   "family": "cow-cat",
-  "roles": ["frontend-designer", "ux-reviewer", "creative"],
+  "name": "奶牛猫",
+  "displayName": "奶牛猫",
+  "nickname": "奶牛猫",
+  "avatar": "/uploads/screenshot-1776503804442-b27f53bb.png",
+  "color": {
+    "primary": "#2D2D2D",
+    "secondary": "#FFFFFF"
+  },
+  "mentionPatterns": [
+    "@奶牛猫",
+    "@奶牛",
+    "@cow-cat",
+    "@cow"
+  ],
+  "defaultVariantId": "cow-cat-default",
+  "roles": [
+    "frontend-designer",
+    "ux-reviewer",
+    "creative"
+  ],
   "lead": false,
   "roleDescription": "视觉设计师和创意顾问，擅长 UI/UX 设计和视觉表达",
-  "strengths": ["visual-design", "ui-ux", "creativity"],
-  "caution": "禁止写代码！幻觉多，不遵守 SOP"
+  "strengths": [
+    "visual-design",
+    "ui-ux",
+    "creativity"
+  ],
+  "caution": "禁止写代码！幻觉多，不遵守 SOP",
+  "modelConfig": {
+    "clientId": "google",
+    "defaultModel": "gemini-3.1-pro-preview",
+    "accountRef": "gemini",
+    "mcpSupport": true,
+    "cli": {
+      "command": "gemini",
+      "outputFormat": "stream-json",
+      "defaultArgs": []
+    },
+    "acp": {
+      "command": "gemini",
+      "startupArgs": [
+        "--acp",
+        "--approval-mode",
+        "yolo"
+      ],
+      "mcpWhitelist": [
+        "cat-cafe",
+        "cat-cafe-memory",
+        "cat-cafe-collab",
+        "cat-cafe-signals",
+        "pencil"
+      ],
+      "supportsMultiplexing": true
+    },
+    "contextBudget": {
+      "maxPromptTokens": 350000,
+      "maxContextTokens": 300000,
+      "maxMessages": 300,
+      "maxContentLengthPerMsg": 15000
+    }
+  }
 }

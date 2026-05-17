@@ -1,0 +1,15 @@
+{
+  "id": "code-mini",
+  "displayName": "代码 Mini 团队",
+  "description": "轻量代码协作团队：大橘猫负责主实现与架构收敛，玄猫负责代码审查、安全和测试覆盖，奶牛猫负责前端体验、交互完整性和表达清晰度",
+  "members": ["big-orange", "black-cat", "cow-cat"],
+  "roleDir": "roles",
+  "workflowDir": "workflow",
+  "governancePromptPath": "governance.md",
+  "reviewPolicy": {
+    "requireDifferentFamily": true,
+    "preferActiveInThread": true,
+    "preferLead": true,
+    "excludeUnavailable": true
+  }
+}

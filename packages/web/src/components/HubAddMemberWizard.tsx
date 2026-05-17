@@ -71,8 +71,8 @@ export function HubAddMemberWizard({ open, onClose, onComplete }: HubAddMemberWi
   }, [antigravityDefaults.models, client, defaultModel, selectedProfile]);
 
   function profileSubtitle(profile: ProfileItem) {
-    if (profile.builtin) return '内置';
-    return 'API Key';
+    const kind = profile.builtin ? '内置' : 'API Key';
+    return `${kind} · id: ${profile.id}`;
   }
 
   useEffect(() => {

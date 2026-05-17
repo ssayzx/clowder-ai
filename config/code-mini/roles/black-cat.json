@@ -1,5 +1,4 @@
 {
-  "family": "black-cat",
   "name": "玄猫",
   "displayName": "玄猫",
   "nickname": "玄猫喵",
@@ -15,29 +14,27 @@
     "@black"
   ],
   "defaultVariantId": "black-cat-default",
-  "roles": [
-    "peer-reviewer",
-    "security",
-    "tester"
-  ],
-  "lead": true,
-  "roleDescription": "代码审查专家，擅长安全分析、测试覆盖和代码质量把控",
+  "roleDescription": "代码审查、安全和测试兜底负责人，负责检查实现风险、边界条件、状态/数据一致性、失败路径、回归风险和测试覆盖，并给出明确可执行的修正意见",
   "strengths": [
     "code-review",
     "security",
-    "testing"
+    "testing",
+    "edge-cases",
+    "state-flow",
+    "regression-risk",
+    "consistency-review"
   ],
   "caution": null,
+  "sessionChain": true,
   "modelConfig": {
     "clientId": "anthropic",
-    "defaultModel": "Kimi-K2.6",
-    "accountRef": "ark-anthropic",
+    "defaultModel": "GLM-5.1",
+    "accountRef": "ark",
     "mcpSupport": true,
     "cli": {
-      "command": "kimi",
+      "command": "claude",
       "outputFormat": "stream-json",
       "defaultArgs": [
-        "--print",
         "--output-format",
         "stream-json"
       ]
@@ -48,5 +45,13 @@
       "maxMessages": 200,
       "maxContentLengthPerMsg": 10000
     }
-  }
+  },
+  "family": "black-cat",
+  "roles": [
+    "peer-reviewer",
+    "security",
+    "tester",
+    "logic-reviewer"
+  ],
+  "lead": true
 }

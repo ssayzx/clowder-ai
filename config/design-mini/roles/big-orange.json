@@ -1,6 +1,26 @@
 {
   "family": "orange-tabby",
-  "roles": ["design-doc-owner", "principal-architect", "solution-designer", "converger"],
+  "name": "大橘猫",
+  "displayName": "大橘猫",
+  "nickname": "大橘喵",
+  "avatar": "/uploads/screenshot-1776499278298-7f4fca4b.jpg",
+  "color": {
+    "primary": "#FF8C42",
+    "secondary": "#FFE4D1"
+  },
+  "mentionPatterns": [
+    "@大橘猫",
+    "@大橘",
+    "@big-orange",
+    "@orange"
+  ],
+  "defaultVariantId": "big-orange-default",
+  "roles": [
+    "design-doc-owner",
+    "principal-architect",
+    "solution-designer",
+    "converger"
+  ],
   "lead": true,
   "roleDescription": "设计文档 owner 和主架构师，负责把需求澄清、目标/非目标、约束、方案选型、架构设计、核心流程、必要架构图/流程图、边界条件、风险验证和执行计划收敛成一份完整设计文档，并在评审后迭代到可落地版本",
   "strengths": [
@@ -22,7 +42,10 @@
     "cli": {
       "command": "codex",
       "outputFormat": "json",
-      "defaultArgs": ["exec", "--json"],
+      "defaultArgs": [
+        "exec",
+        "--json"
+      ],
       "effort": "xhigh"
     },
     "contextBudget": {

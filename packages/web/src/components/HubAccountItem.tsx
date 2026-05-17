@@ -130,6 +130,9 @@ export function HubAccountItem({ profile, busy, onSave, onDelete }: HubAccountIt
         <div className="min-w-0 space-y-2">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-base font-bold text-[#2D2118]">{profile.displayName}</span>
+            <span className="rounded-full border border-[#E8DCCF] bg-[#F7F3F0] px-2 py-0.5 text-[11px] font-semibold text-[#8A776B]">
+              id: {profile.id}
+            </span>
             {profile.builtin ? (
               <span className="text-[11px] font-semibold text-[#8A776B] flex items-center gap-0.5">
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -758,6 +758,71 @@ describe('HubCatEditor', () => {
     expect(modelInputAfter.value).not.toBe('claude-opus-4-6');
   });
 
+  it('shows every configured account model in the model picker', async () => {
+    mockApiFetch.mockResolvedValue(
+      jsonResponse({
+        projectPath: '/tmp/project',
+        activeProfileId: null,
+        providers: [
+          {
+            id: 'claude',
+            provider: 'claude',
+            displayName: 'Claude (OAuth)',
+            name: 'Claude (OAuth)',
+            authType: 'oauth',
+            kind: 'builtin',
+            builtin: true,
+            clientId: 'anthropic',
+            models: ['claude-opus-4-6', 'claude-sonnet-4-5', 'claude-haiku-4-5'],
+            hasApiKey: false,
+            createdAt: '',
+            updatedAt: '',
+          },
+        ],
+      }),
+    );
+
+    await act(async () => {
+      root.render(
+        React.createElement(HubCatEditor, {
+          open: true,
+          cat: {
+            id: 'opus',
+            displayName: 'Opus',
+            breedDisplayName: 'Ragdoll',
+            nickname: '',
+            clientId: 'anthropic',
+            accountRef: 'claude',
+            defaultModel: 'claude-opus-4-6',
+            color: { primary: '#000', secondary: '#fff' },
+            mentionPatterns: ['@opus'],
+            avatar: '',
+            roleDescription: '',
+            personality: '',
+            source: 'seed',
+          },
+          onClose: vi.fn(),
+          onSaved: vi.fn(),
+        }),
+      );
+    });
+    await flushEffects();
+
+    const modelPicker = queryField<HTMLSelectElement>(container, 'select[aria-label="Model options"]');
+    const optionValues = Array.from(modelPicker.options).map((option) => option.value);
+    expect(optionValues).toEqual([
+      '',
+      'claude-opus-4-6',
+      'claude-sonnet-4-5',
+      'claude-haiku-4-5',
+    ]);
+
+    await changeField(modelPicker, 'claude-sonnet-4-5', 'change');
+
+    const modelInput = queryField<HTMLInputElement>(container, 'input[aria-label="Model"]');
+    expect(modelInput.value).toBe('claude-sonnet-4-5');
+  });
+
   it('resets provider when switching account to prevent stale provider carry-over', async () => {
     mockApiFetch.mockResolvedValue(
       jsonResponse({
@@ -907,8 +972,8 @@ describe('HubCatEditor', () => {
     await flushEffects();
     const providerSelect = queryField<HTMLSelectElement>(container, 'select[aria-label="认证信息"]');
     const optionLabels = Array.from(providerSelect.options).map((option) => option.textContent ?? '');
-    expect(optionLabels).toContain('Codex (OAuth)（内置）');
-    expect(optionLabels).toContain('Claude Sponsor（API Key）');
+    expect(optionLabels).toContain('Codex (OAuth)（内置） · codex-oauth');
+    expect(optionLabels).toContain('Claude Sponsor（API Key） · claude-sponsor');
   });
 
   it('keeps fallback builtin OAuth available when editing a cat after switching to an API key', async () => {
@@ -962,8 +1027,8 @@ describe('HubCatEditor', () => {
 
     const providerSelect = queryField<HTMLSelectElement>(container, 'select[aria-label="认证信息"]');
     const optionLabels = Array.from(providerSelect.options).map((option) => option.textContent ?? '');
-    expect(optionLabels).toContain('Claude (OAuth)（内置）');
-    expect(optionLabels).toContain('Claude Sponsor（API Key）');
+    expect(optionLabels).toContain('Claude (OAuth)（内置） · claude');
+    expect(optionLabels).toContain('Claude Sponsor（API Key） · claude-sponsor');
 
     await changeField(providerSelect, 'claude', 'change');
     expect(providerSelect.value).toBe('claude');
@@ -1020,8 +1085,8 @@ describe('HubCatEditor', () => {
 
     const providerSelect = queryField<HTMLSelectElement>(container, 'select[aria-label="认证信息"]');
     const optionLabels = Array.from(providerSelect.options).map((option) => option.textContent ?? '');
-    expect(optionLabels).toContain('Codex (OAuth)（内置）');
-    expect(optionLabels).toContain('my-claude（API Key）');
+    expect(optionLabels).toContain('Codex (OAuth)（内置） · codex');
+    expect(optionLabels).toContain('my-claude（API Key） · my-claude');
     expect(providerSelect.value).toBe('codex');
   });
 
@@ -2054,7 +2119,7 @@ describe('HubCatEditor', () => {
     expect(queryField<HTMLSelectElement>(container, 'select[aria-label^="Codex Sandbox"]').disabled).toBe(false);
     expect(queryField<HTMLSelectElement>(container, 'select[aria-label^="Codex Approval"]').disabled).toBe(false);
     expect(queryField<HTMLSelectElement>(container, 'select[aria-label^="Codex Auth Mode"]').disabled).toBe(false);
-    expect(container.textContent).toContain('运行时持久化');
+    expect(container.textContent).toContain('配置持久化');
     expect(container.textContent).toContain('保存修改');
     expect(container.textContent).not.toContain('删除成员');
     expect(container.textContent).not.toContain('账号与运行方式');

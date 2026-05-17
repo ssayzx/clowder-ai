@@ -1,6 +1,26 @@
 {
   "family": "cow-cat",
-  "roles": ["experience-reviewer", "interaction-reviewer", "clarity-reviewer", "reader-journey-reviewer"],
+  "name": "奶牛猫",
+  "displayName": "奶牛猫",
+  "nickname": "奶牛猫",
+  "avatar": "/uploads/screenshot-1776503804442-b27f53bb.png",
+  "color": {
+    "primary": "#2D2D2D",
+    "secondary": "#FFFFFF"
+  },
+  "mentionPatterns": [
+    "@奶牛猫",
+    "@奶牛",
+    "@cow-cat",
+    "@cow"
+  ],
+  "defaultVariantId": "cow-cat-default",
+  "roles": [
+    "experience-reviewer",
+    "interaction-reviewer",
+    "clarity-reviewer",
+    "reader-journey-reviewer"
+  ],
   "lead": false,
   "roleDescription": "读者视角、体验与表达评审，负责检查设计文档是否面向真实用户场景，概念解释是否清楚，信息层级是否易读，关键流程、界面状态、异常状态、交互说明以及用户流程图/状态图等表达是否完整",
   "strengths": [
@@ -22,6 +42,22 @@
       "command": "gemini",
       "outputFormat": "stream-json",
       "defaultArgs": []
+    },
+    "acp": {
+      "command": "gemini",
+      "startupArgs": [
+        "--acp",
+        "--approval-mode",
+        "yolo"
+      ],
+      "mcpWhitelist": [
+        "cat-cafe",
+        "cat-cafe-memory",
+        "cat-cafe-collab",
+        "cat-cafe-signals",
+        "pencil"
+      ],
+      "supportsMultiplexing": true
     },
     "contextBudget": {
       "maxPromptTokens": 350000,

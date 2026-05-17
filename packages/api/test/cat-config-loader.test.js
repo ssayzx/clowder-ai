@@ -16,6 +16,7 @@ const {
   getDefaultCatId,
   buildCatIdToBreedIndex,
   getCatEffort,
+  getAcpConfig,
   _resetCachedConfig,
 } = await import('../dist/config/cat-config-loader.js');
 const { setActiveTeamId, DEFAULT_TEAM_ID } = await import('../dist/config/team-config.js');
@@ -1115,7 +1116,8 @@ describe('F32-b P4c: Sonnet variant in project config', () => {
     assert.equal(sonnetVariant.catId, 'sonnet');
     assert.equal(sonnetVariant.variantLabel, 'Sonnet');
     assert.equal(sonnetVariant.clientId, 'anthropic');
-    assert.equal(sonnetVariant.defaultModel, 'claude-sonnet-4-6');
+    assert.ok(sonnetVariant.defaultModel);
+    assert.ok(sonnetVariant.cli.defaultArgs?.includes('claude-sonnet-4-6'));
   });
 
   it('Sonnet expands to independent cat with correct overrides', () => {
@@ -1138,10 +1140,10 @@ describe('F32-b P4c: Sonnet variant in project config', () => {
     assert.notDeepEqual(all.sonnet.color, all.opus.color);
   });
 
-  it('total cat count is 17 including patent cats', () => {
+  it('default team excludes config-managed team cats', () => {
     const config = loadCatConfig();
     const all = toAllCatConfigs(config);
-    assert.equal(Object.keys(all).length, 17);
+    assert.equal(Object.keys(all).length, 13);
     assert.ok(all.opus);
     assert.ok(all.sonnet);
     assert.ok(all['opus-45']);
@@ -1155,10 +1157,50 @@ describe('F32-b P4c: Sonnet variant in project config', () => {
     assert.ok(all.antigravity); // F061: Bengal cat (Antigravity CDP bridge)
     assert.ok(all['antig-opus']); // F061: Bengal cat Claude variant
     assert.ok(all.opencode); // F105: OpenCode external agent
-    assert.ok(all['big-orange']);
-    assert.ok(all['black-cat']);
-    assert.ok(all['cow-cat']);
-    assert.ok(all['calico-cat']);
+    assert.equal(all['big-orange'], undefined);
+    assert.equal(all['black-cat'], undefined);
+    assert.equal(all['cow-cat'], undefined);
+    assert.equal(all['calico-cat'], undefined);
+  });
+
+  it('config teams can define migrated cats without base catalog entries', () => {
+    setActiveTeamId(process.cwd(), 'code');
+    try {
+      const config = loadCatConfig(undefined, { projectRoot: process.cwd() });
+      const all = toAllCatConfigs(config);
+      assert.deepEqual(Object.keys(all).sort(), ['big-orange', 'black-cat', 'calico-cat', 'cow-cat']);
+      assert.equal(all['big-orange'].clientId, 'openai');
+      assert.equal(all['big-orange'].defaultModel, 'gpt-5.5');
+      assert.equal(all['black-cat'].clientId, 'anthropic');
+      assert.equal(all['black-cat'].defaultModel, 'Kimi-K2.6');
+      assert.equal(all['cow-cat'].clientId, 'google');
+      assert.equal(all['cow-cat'].defaultModel, 'gemini-3.1-pro-preview');
+      const cowAcp = getAcpConfig('cow-cat');
+      assert.ok(cowAcp);
+      assert.equal(cowAcp.command, 'gemini');
+      assert.deepEqual(cowAcp.startupArgs, ['--acp', '--approval-mode', 'yolo']);
+      assert.ok(cowAcp.mcpWhitelist.includes('cat-cafe'));
+      assert.equal(all['calico-cat'].clientId, 'kimi');
+      assert.equal(all['calico-cat'].defaultModel, 'K2.6');
+    } finally {
+      setActiveTeamId(process.cwd(), DEFAULT_TEAM_ID);
+    }
+  });
+
+  it('config-managed Gemini cats expose ACP config from active team roles', () => {
+    const teams = ['code', 'code-mini', 'design-mini', 'diagram', 'diagram-mini', 'patent'];
+    try {
+      for (const teamId of teams) {
+        setActiveTeamId(process.cwd(), teamId);
+        const cowAcp = getAcpConfig('cow-cat');
+        assert.ok(cowAcp, `${teamId} cow-cat ACP config missing`);
+        assert.equal(cowAcp.command, 'gemini');
+        assert.deepEqual(cowAcp.startupArgs, ['--acp', '--approval-mode', 'yolo']);
+        assert.ok(cowAcp.mcpWhitelist.includes('cat-cafe'));
+      }
+    } finally {
+      setActiveTeamId(process.cwd(), DEFAULT_TEAM_ID);
+    }
   });
 
   it('projects antigravity commandArgs from cli.defaultArgs when variant.commandArgs is absent', () => {

@@ -1,6 +1,16 @@
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs';
 import { basename, join, relative, resolve, sep } from 'node:path';
-import type { CatBreed, CatCafeConfig, CatVariant, ReviewPolicy, RosterEntry } from '@cat-cafe/shared';
+import type {
+  CatBreed,
+  CatCafeConfig,
+  CatColor,
+  CatVariant,
+  CliConfig,
+  ClientId,
+  ContextBudget,
+  ReviewPolicy,
+  RosterEntry,
+} from '@cat-cafe/shared';
 import { z } from 'zod';
 
 export const DEFAULT_TEAM_ID = 'default';
@@ -16,11 +26,29 @@ const cliConfigSchema = z.object({
   effort: z.enum(['low', 'medium', 'high', 'max', 'xhigh']).optional(),
 });
 
+const acpConfigSchema = z.object({
+  command: z.string().min(1),
+  startupArgs: z.array(z.string().min(1)),
+  mcpWhitelist: z.array(z.string().min(1)).optional(),
+  supportsMultiplexing: z.boolean().optional(),
+  pool: z
+    .object({
+      maxLiveProcesses: z.number().positive().int().optional(),
+      idleTtlMs: z.number().positive().int().optional(),
+    })
+    .optional(),
+});
+
 const contextBudgetSchema = z.object({
   maxPromptTokens: z.number().positive().int(),
   maxContextTokens: z.number().positive().int(),
   maxMessages: z.number().positive().int(),
   maxContentLengthPerMsg: z.number().positive().int(),
+});
+
+const colorSchema = z.object({
+  primary: z.string().min(1),
+  secondary: z.string().min(1),
 });
 
 const modelConfigSchema = z.object({
@@ -29,6 +57,7 @@ const modelConfigSchema = z.object({
   accountRef: z.string().min(1).nullable().optional(),
   mcpSupport: z.boolean().optional(),
   cli: cliConfigSchema.optional(),
+  acp: acpConfigSchema.optional(),
   commandArgs: z.array(z.string().min(1)).optional(),
   cliConfigArgs: z.array(z.string().min(1)).optional(),
   contextBudget: contextBudgetSchema.optional(),
@@ -51,11 +80,19 @@ const rosterPatchSchema = z.object({
 
 const rolePatchSchema = z
   .object({
+    name: z.string().min(1).optional(),
+    displayName: z.string().min(1).optional(),
+    nickname: z.string().min(1).optional(),
+    avatar: z.string().min(1).optional(),
+    color: colorSchema.optional(),
+    mentionPatterns: z.array(z.string().min(2).regex(/^@/, 'mentionPattern must start with @')).optional(),
+    defaultVariantId: z.string().min(1).optional(),
     roleDescription: z.string().min(1).optional(),
     personality: z.string().min(1).optional(),
     teamStrengths: z.string().min(1).optional(),
     strengths: z.array(z.string().min(1)).optional(),
     caution: z.string().nullable().optional(),
+    sessionChain: z.boolean().optional(),
     workflowPromptPath: z.string().min(1).optional(),
     governancePromptPath: z.string().min(1).optional(),
     collaborationGroup: z.string().min(1).optional(),
@@ -102,6 +139,57 @@ type RolePatch = z.infer<typeof rolePatchSchema>;
 type RosterPatch = z.infer<typeof rosterPatchSchema>;
 type ModelConfigPatch = z.infer<typeof modelConfigSchema>;
 type MutableRecord = Record<string, any>;
+export type TeamAcpConfig = z.infer<typeof acpConfigSchema>;
+
+export interface TeamCatInput {
+  catId: string;
+  name: string;
+  displayName: string;
+  nickname?: string;
+  avatar: string;
+  color: CatColor;
+  mentionPatterns: string[];
+  accountRef?: string;
+  contextBudget?: ContextBudget;
+  roleDescription: string;
+  personality?: string;
+  teamStrengths?: string;
+  caution?: string | null;
+  strengths?: string[];
+  sessionChain?: boolean;
+  clientId: ClientId;
+  defaultModel: string;
+  mcpSupport: boolean;
+  cli: CliConfig;
+  commandArgs?: string[];
+  cliConfigArgs?: string[];
+  provider?: string;
+}
+
+export interface TeamCatUpdate {
+  name?: string;
+  displayName?: string;
+  nickname?: string;
+  avatar?: string;
+  color?: CatColor;
+  mentionPatterns?: string[];
+  accountRef?: string | null;
+  contextBudget?: ContextBudget | null;
+  roleDescription?: string;
+  personality?: string;
+  teamStrengths?: string;
+  caution?: string | null;
+  strengths?: string[];
+  sessionChain?: boolean;
+  available?: boolean;
+  clientId?: ClientId;
+  defaultModel?: string;
+  mcpSupport?: boolean;
+  cli?: CliConfig;
+  commandArgs?: string[];
+  cliConfigArgs?: string[];
+  provider?: string | null;
+}
 
 interface LoadedTeamProfile {
   profile: TeamProfile;
@@ -137,6 +225,13 @@ function parseTeamProfile(profilePath: string, teamId: string): LoadedTeamProfil
     throw new Error(`Team profile id "${parsed.data.id}" does not match directory "${teamId}"`);
   }
   return { profile: parsed.data, dir: resolve(profilePath, '..'), teamId };
+}
+
+function writeJsonAtomic(path: string, value: unknown): void {
+  const tempPath = `${path}.tmp-${process.pid}-${Date.now()}`;
+  mkdirSync(resolve(path, '..'), { recursive: true });
+  writeFileSync(tempPath, `${JSON.stringify(value, null, 2)}\n`, 'utf-8');
+  renameSync(tempPath, path);
 }
 
 function readRolePatchFile(path: string): RolePatch {
@@ -267,6 +362,15 @@ function applyRolePatch(
     target.collaborationGroup = teamId;
     return;
   }
+  if (patch.name) target.name = patch.name;
+  if (patch.displayName) target.displayName = patch.displayName;
+  if (patch.nickname !== undefined) {
+    if (patch.nickname.trim().length > 0) target.nickname = patch.nickname.trim();
+    else delete target.nickname;
+  }
+  if (patch.avatar) target.avatar = patch.avatar;
+  if (patch.color) target.color = patch.color;
+  if (patch.mentionPatterns) target.mentionPatterns = patch.mentionPatterns;
   if (patch.roleDescription) target.roleDescription = patch.roleDescription;
   if (patch.personality) {
     target.personality = patch.personality;
@@ -279,6 +383,13 @@ function applyRolePatch(
     if (!patch.teamStrengths) delete target.teamStrengths;
   }
   if (patch.caution !== undefined) target.caution = patch.caution;
+  if (patch.sessionChain !== undefined) {
+    if (Array.isArray((target as { variants?: unknown }).variants)) {
+      target.features = { ...((target.features as Record<string, unknown> | undefined) ?? {}), sessionChain: patch.sessionChain };
+    } else {
+      target.sessionChain = patch.sessionChain;
+    }
+  }
   applyModelConfigPatch(target, patch);
   if (patch.modelConfig) applyModelConfigPatch(target, patch.modelConfig);
   if (patch.workflowPromptPath) {
@@ -301,6 +412,7 @@ function applyModelConfigPatch(target: Record<string, unknown>, patch: ModelConf
   }
   if (patch.mcpSupport !== undefined) target.mcpSupport = patch.mcpSupport;
   if (patch.cli) target.cli = patch.cli;
+  if (patch.acp) target.acp = patch.acp;
   if (patch.commandArgs) {
     if (patch.commandArgs.length > 0) target.commandArgs = patch.commandArgs;
     else delete target.commandArgs;
@@ -316,8 +428,91 @@ function applyModelConfigPatch(target: Record<string, unknown>, patch: ModelConf
   }
 }
 
+function getEffectiveModelConfig(patch: RolePatch): ModelConfigPatch {
+  return {
+    ...(patch.clientId ? { clientId: patch.clientId } : {}),
+    ...(patch.defaultModel ? { defaultModel: patch.defaultModel } : {}),
+    ...(patch.accountRef !== undefined ? { accountRef: patch.accountRef } : {}),
+    ...(patch.mcpSupport !== undefined ? { mcpSupport: patch.mcpSupport } : {}),
+    ...(patch.cli ? { cli: patch.cli } : {}),
+    ...(patch.acp ? { acp: patch.acp } : {}),
+    ...(patch.commandArgs ? { commandArgs: patch.commandArgs } : {}),
+    ...(patch.cliConfigArgs ? { cliConfigArgs: patch.cliConfigArgs } : {}),
+    ...(patch.contextBudget ? { contextBudget: patch.contextBudget } : {}),
+    ...(patch.provider !== undefined ? { provider: patch.provider } : {}),
+    ...(patch.modelConfig ?? {}),
+  };
+}
+
+function requireStandaloneModelConfig(catId: string, patch: RolePatch): Required<Pick<ModelConfigPatch, 'clientId' | 'defaultModel' | 'cli'>> &
+  ModelConfigPatch {
+  const model = getEffectiveModelConfig(patch);
+  if (!model.clientId || !model.defaultModel || !model.cli) {
+    throw new Error(
+      `Team member "${catId}" is not present in base catalog and must define modelConfig.clientId, modelConfig.defaultModel, and modelConfig.cli`,
+    );
+  }
+  return model as Required<Pick<ModelConfigPatch, 'clientId' | 'defaultModel' | 'cli'>> & ModelConfigPatch;
+}
+
+function createStandaloneBreed(
+  projectRoot: string,
+  teamDir: string,
+  teamId: string,
+  catId: string,
+  patch: RolePatch | undefined,
+): MutableRecord & CatBreed {
+  if (!patch) {
+    throw new Error(`Team member "${catId}" is not present in base catalog and has no role config`);
+  }
+  const model = requireStandaloneModelConfig(catId, patch);
+  const displayName = patch.displayName ?? patch.name ?? catId;
+  const defaultVariantId = patch.defaultVariantId ?? `${catId}-default`;
+  const breed = {
+    id: patch.family ?? catId,
+    catId: catId as CatBreed['catId'],
+    name: patch.name ?? displayName,
+    displayName,
+    ...(patch.nickname ? { nickname: patch.nickname } : {}),
+    avatar: patch.avatar ?? '/avatars/default-cat.png',
+    color: patch.color ?? { primary: '#4A5568', secondary: '#E2E8F0' },
+    mentionPatterns: patch.mentionPatterns ?? [`@${displayName}`, `@${catId}`],
+    roleDescription: patch.roleDescription ?? 'Team member',
+    defaultVariantId,
+    variants: [
+      {
+        id: defaultVariantId,
+        catId,
+        clientId: model.clientId,
+        defaultModel: model.defaultModel,
+        mcpSupport: model.mcpSupport ?? true,
+        cli: model.cli,
+        ...(model.acp ? { acp: model.acp } : {}),
+        ...(model.accountRef !== undefined && model.accountRef !== null ? { accountRef: model.accountRef } : {}),
+        ...(model.commandArgs ? { commandArgs: model.commandArgs } : {}),
+        ...(model.cliConfigArgs ? { cliConfigArgs: model.cliConfigArgs } : {}),
+        ...(model.contextBudget ? { contextBudget: model.contextBudget } : {}),
+        ...(model.provider ? { provider: model.provider } : {}),
+        source: 'seed' as const,
+      },
+    ],
+  } as MutableRecord & CatBreed;
+  applyRolePatch(projectRoot, teamDir, teamId, breed, patch);
+  const variant = (breed.variants[0] as MutableRecord & CatVariant) ?? null;
+  if (variant) applyRolePatch(projectRoot, teamDir, teamId, variant, patch);
+  return breed;
+}
+
 export function getActiveTeamId(): string {
   return activeTeamId;
+}
+
+export function getTeamAcpConfig(projectRoot: string, teamId: string, catId: string): TeamAcpConfig | undefined {
+  if (teamId === DEFAULT_TEAM_ID) return undefined;
+  const loaded = readTeamProfile(projectRoot, teamId);
+  if (!loaded) return undefined;
+  const rolePatch = collectAllRolePatches(loaded.profile, loaded.dir)[catId];
+  return rolePatch?.modelConfig?.acp ?? rolePatch?.acp;
 }
 
 export function setActiveTeamId(projectRoot: string, teamId: string): void {
@@ -359,6 +554,177 @@ export function listTeamProfiles(projectRoot: string): TeamProfileSummary[] {
     });
   }
   return profiles;
+}
+
+function rolePathFor(profile: LoadedTeamProfile, catId: string): string {
+  return join(resolveTeamLocalPath(profile.dir, profile.profile.roleDir ?? 'roles'), `${catId}.json`);
+}
+
+function teamProfilePathFor(profile: LoadedTeamProfile): string {
+  return join(profile.dir, 'team.json');
+}
+
+function normalizeMentionPatterns(mentionPatterns: readonly string[]): string[] {
+  return Array.from(
+    new Set(
+      mentionPatterns
+        .map((pattern) => pattern.trim())
+        .filter((pattern) => pattern.length > 0)
+        .map((pattern) => (pattern.startsWith('@') ? pattern : `@${pattern}`)),
+    ),
+  );
+}
+
+function normalizeRolePatchForWrite(catId: string, patch: RolePatch): RolePatch {
+  return {
+    ...patch,
+    family: patch.family ?? catId,
+    mentionPatterns: patch.mentionPatterns ? normalizeMentionPatterns(patch.mentionPatterns) : [`@${catId}`],
+    defaultVariantId: patch.defaultVariantId ?? `${catId}-default`,
+  };
+}
+
+function writeTeamProfileMembers(loaded: LoadedTeamProfile, members: readonly string[]): void {
+  const profilePath = teamProfilePathFor(loaded);
+  writeJsonAtomic(profilePath, {
+    ...loaded.profile,
+    members: Array.from(new Set(members)),
+  });
+}
+
+function toWritableCliConfig(cli: CliConfig): z.infer<typeof cliConfigSchema> {
+  return {
+    command: cli.command,
+    outputFormat: cli.outputFormat,
+    ...(cli.defaultArgs ? { defaultArgs: [...cli.defaultArgs] } : {}),
+    ...(cli.effort ? { effort: cli.effort } : {}),
+  };
+}
+
+function toRolePatchFromInput(input: TeamCatInput): RolePatch {
+  return normalizeRolePatchForWrite(input.catId, {
+    family: input.catId,
+    roles: ['assistant'],
+    lead: false,
+    name: input.name,
+    displayName: input.displayName,
+    ...(input.nickname ? { nickname: input.nickname } : {}),
+    avatar: input.avatar,
+    color: input.color,
+    mentionPatterns: input.mentionPatterns,
+    defaultVariantId: `${input.catId}-default`,
+    roleDescription: input.roleDescription,
+    ...(input.personality ? { personality: input.personality } : {}),
+    ...(input.teamStrengths ? { teamStrengths: input.teamStrengths } : {}),
+    ...(input.caution !== undefined ? { caution: input.caution } : {}),
+    ...(input.strengths ? { strengths: input.strengths } : {}),
+    ...(input.sessionChain !== undefined ? { sessionChain: input.sessionChain } : {}),
+    modelConfig: {
+      clientId: input.clientId,
+      defaultModel: input.defaultModel,
+      ...(input.accountRef ? { accountRef: input.accountRef } : {}),
+      mcpSupport: input.mcpSupport,
+      cli: toWritableCliConfig(input.cli),
+      ...(input.commandArgs ? { commandArgs: input.commandArgs } : {}),
+      ...(input.cliConfigArgs ? { cliConfigArgs: input.cliConfigArgs } : {}),
+      ...(input.contextBudget ? { contextBudget: input.contextBudget } : {}),
+      ...(input.provider ? { provider: input.provider } : {}),
+    },
+  });
+}
+
+function mergeRolePatchForUpdate(catId: string, existing: RolePatch, patch: TeamCatUpdate): RolePatch {
+  const next: RolePatch = { ...existing };
+  if (patch.name !== undefined) next.name = patch.name;
+  if (patch.displayName !== undefined) next.displayName = patch.displayName;
+  if (patch.nickname !== undefined) {
+    if (patch.nickname.trim().length > 0) next.nickname = patch.nickname.trim();
+    else delete next.nickname;
+  }
+  if (patch.avatar !== undefined) next.avatar = patch.avatar;
+  if (patch.color !== undefined) next.color = patch.color;
+  if (patch.mentionPatterns !== undefined) next.mentionPatterns = normalizeMentionPatterns(patch.mentionPatterns);
+  if (patch.roleDescription !== undefined) next.roleDescription = patch.roleDescription;
+  if (patch.personality !== undefined) {
+    if (patch.personality.trim().length > 0) next.personality = patch.personality;
+    else delete next.personality;
+  }
+  if (patch.teamStrengths !== undefined) {
+    if (patch.teamStrengths.trim().length > 0) next.teamStrengths = patch.teamStrengths.trim();
+    else delete next.teamStrengths;
+  }
+  if (patch.caution !== undefined) next.caution = patch.caution && patch.caution.trim().length > 0 ? patch.caution.trim() : null;
+  if (patch.strengths !== undefined) {
+    if (patch.strengths.length > 0) next.strengths = patch.strengths;
+    else delete next.strengths;
+  }
+  if (patch.sessionChain !== undefined) next.sessionChain = patch.sessionChain;
+  if (patch.available !== undefined) next.available = patch.available;
+
+  const modelConfig = { ...(next.modelConfig ?? {}) } as ModelConfigPatch;
+  if (patch.clientId !== undefined) modelConfig.clientId = patch.clientId;
+  if (patch.defaultModel !== undefined) modelConfig.defaultModel = patch.defaultModel;
+  if (patch.accountRef !== undefined) {
+    if (patch.accountRef && patch.accountRef.trim().length > 0) modelConfig.accountRef = patch.accountRef.trim();
+    else delete modelConfig.accountRef;
+  }
+  if (patch.mcpSupport !== undefined) modelConfig.mcpSupport = patch.mcpSupport;
+  if (patch.cli !== undefined) modelConfig.cli = toWritableCliConfig(patch.cli);
+  if (patch.commandArgs !== undefined) {
+    if (patch.commandArgs.length > 0) modelConfig.commandArgs = patch.commandArgs;
+    else delete modelConfig.commandArgs;
+  }
+  if (patch.cliConfigArgs !== undefined) {
+    if (patch.cliConfigArgs.length > 0) modelConfig.cliConfigArgs = patch.cliConfigArgs;
+    else delete modelConfig.cliConfigArgs;
+  }
+  if (patch.contextBudget !== undefined) {
+    if (patch.contextBudget) modelConfig.contextBudget = patch.contextBudget;
+    else delete modelConfig.contextBudget;
+  }
+  if (patch.provider !== undefined) {
+    if (patch.provider) modelConfig.provider = patch.provider;
+    else delete modelConfig.provider;
+  }
+  next.modelConfig = modelConfig;
+  return normalizeRolePatchForWrite(catId, next);
+}
+
+export function createTeamCat(projectRoot: string, teamId: string, input: TeamCatInput): void {
+  if (teamId === DEFAULT_TEAM_ID) throw new Error('default team writes must use runtime catalog');
+  const loaded = readTeamProfile(projectRoot, teamId);
+  if (!loaded) throw new Error(`Team "${teamId}" not found under config/${teamId}/team.json`);
+  const members = loaded.profile.members ?? [];
+  if (members.includes(input.catId) || existsSync(rolePathFor(loaded, input.catId))) {
+    throw new Error(`Cat "${input.catId}" already exists in team "${teamId}"`);
+  }
+  writeJsonAtomic(rolePathFor(loaded, input.catId), toRolePatchFromInput(input));
+  writeTeamProfileMembers(loaded, [...members, input.catId]);
+}
+
+export function updateTeamCat(projectRoot: string, teamId: string, catId: string, patch: TeamCatUpdate): void {
+  if (teamId === DEFAULT_TEAM_ID) throw new Error('default team writes must use runtime catalog');
+  const loaded = readTeamProfile(projectRoot, teamId);
+  if (!loaded) throw new Error(`Team "${teamId}" not found under config/${teamId}/team.json`);
+  const path = rolePathFor(loaded, catId);
+  if (!existsSync(path)) {
+    throw new Error(`Cat "${catId}" not found in team "${teamId}" role config`);
+  }
+  const existing = readRolePatchFile(path);
+  writeJsonAtomic(path, mergeRolePatchForUpdate(catId, existing, patch));
+}
+
+export function deleteTeamCat(projectRoot: string, teamId: string, catId: string): void {
+  if (teamId === DEFAULT_TEAM_ID) throw new Error('default team writes must use runtime catalog');
+  const loaded = readTeamProfile(projectRoot, teamId);
+  if (!loaded) throw new Error(`Team "${teamId}" not found under config/${teamId}/team.json`);
+  const members = loaded.profile.members ?? [];
+  writeTeamProfileMembers(
+    loaded,
+    members.filter((member) => member !== catId),
+  );
+  const path = rolePathFor(loaded, catId);
+  if (existsSync(path)) unlinkSync(path);
 }
 
 export function applyTeamProfile(config: CatCafeConfig, projectRoot: string, teamId = activeTeamId): CatCafeConfig {
@@ -417,6 +783,19 @@ function applyLoadedTeamProfile(
       return nextBreed;
     })
     .filter((breed): breed is MutableRecord & CatBreed => breed !== null);
+
+  if (options.filterMembers && memberFilter) {
+    const presentCatIds = new Set<string>();
+    for (const breed of next.breeds) {
+      for (const variant of breed.variants) {
+        presentCatIds.add(getVariantCatId(breed, variant));
+      }
+    }
+    for (const catId of memberFilter) {
+      if (presentCatIds.has(catId)) continue;
+      nextRecord.breeds.push(createStandaloneBreed(projectRoot, dir, teamId, catId, rolePatches[catId]));
+    }
+  }
 
   if (next.version === 2) {
     const nextRoster: Record<string, RosterEntry> = options.filterMembers ? {} : { ...next.roster };

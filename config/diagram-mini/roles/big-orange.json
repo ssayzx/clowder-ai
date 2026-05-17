@@ -1,6 +1,25 @@
 {
   "family": "orange-tabby",
-  "roles": ["drawio-owner", "architecture-diagram-lead", "layout-converger"],
+  "name": "大橘猫",
+  "displayName": "大橘猫",
+  "nickname": "大橘喵",
+  "avatar": "/uploads/screenshot-1776499278298-7f4fca4b.jpg",
+  "color": {
+    "primary": "#FF8C42",
+    "secondary": "#FFE4D1"
+  },
+  "mentionPatterns": [
+    "@大橘猫",
+    "@大橘",
+    "@big-orange",
+    "@orange"
+  ],
+  "defaultVariantId": "big-orange-default",
+  "roles": [
+    "drawio-owner",
+    "architecture-diagram-lead",
+    "layout-converger"
+  ],
   "lead": true,
   "roleDescription": "draw.io 架构图 owner，负责澄清图的目标、受众、范围和抽象层级，确定节点/边/分组/页面拆分，产出可导入 draw.io 的 XML，并在评审后收敛到布局清晰明了的最终版本",
   "strengths": [
@@ -21,7 +40,10 @@
     "cli": {
       "command": "codex",
       "outputFormat": "json",
-      "defaultArgs": ["exec", "--json"],
+      "defaultArgs": [
+        "exec",
+        "--json"
+      ],
       "effort": "xhigh"
     },
     "contextBudget": {

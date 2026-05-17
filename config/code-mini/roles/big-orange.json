@@ -16,18 +16,19 @@
   ],
   "defaultVariantId": "big-orange-default",
   "roles": [
-    "architecture-lead",
-    "systems-modeler",
+    "architect",
+    "coder",
     "converger"
   ],
   "lead": true,
-  "roleDescription": "架构图主设计者，负责确定图的目标、抽象层级、系统边界、模块划分和最终表达取舍",
+  "roleDescription": "主架构师和核心开发者，负责理解现有代码、拆解需求、完成实现、修复 review 意见，并把代码收敛到可运行、可测试、可维护的终态",
   "strengths": [
-    "system-boundary",
-    "architecture-modeling",
-    "component-decomposition",
-    "abstraction",
-    "convergence"
+    "architecture",
+    "backend",
+    "mcp",
+    "implementation",
+    "refactoring-control",
+    "delivery-convergence"
   ],
   "caution": null,
   "modelConfig": {

@@ -34,6 +34,15 @@ import { configEventBus, createChangeSetId } from '../config/config-event-bus.js
 import { resolveProjectTemplatePath } from '../config/project-template-path.js';
 import { createRuntimeCat, deleteRuntimeCat, updateRuntimeCat } from '../config/runtime-cat-catalog.js';
 import { deleteRuntimeOverride, getRuntimeOverride, setRuntimeOverride } from '../config/session-strategy-overrides.js';
+import {
+  createTeamCat,
+  DEFAULT_TEAM_ID,
+  deleteTeamCat,
+  getActiveTeamId,
+  type TeamCatInput,
+  type TeamCatUpdate,
+  updateTeamCat,
+} from '../config/team-config.js';
 import { buildStaticIdentity } from '../domains/cats/services/context/SystemPromptBuilder.js';
 import { resolveActiveProjectRoot } from '../utils/active-project-root.js';
 import { resolveHeaderUserId } from '../utils/request-identity.js';
@@ -150,7 +159,7 @@ function resolveProjectRoot(): string {
   return resolveActiveProjectRoot();
 }
 
-type CatSource = 'seed' | 'runtime';
+type CatSource = 'seed' | 'runtime' | 'config';
 
 interface CatResponseMetadata {
   roster: RosterEntry | null;
@@ -276,6 +285,37 @@ function resolveNextCli(params: {
   return undefined;
 }
 
+function isConfigTeamActive(): boolean {
+  return getActiveTeamId() !== DEFAULT_TEAM_ID;
+}
+
+function createTeamOrRuntimeCat(projectRoot: string, input: TeamCatInput): void {
+  const activeTeamId = getActiveTeamId();
+  if (activeTeamId === DEFAULT_TEAM_ID) {
+    createRuntimeCat(projectRoot, input);
+    return;
+  }
+  createTeamCat(projectRoot, activeTeamId, input);
+}
+
+function updateTeamOrRuntimeCat(projectRoot: string, catId: string, patch: TeamCatUpdate): void {
+  const activeTeamId = getActiveTeamId();
+  if (activeTeamId === DEFAULT_TEAM_ID) {
+    updateRuntimeCat(projectRoot, catId, patch);
+    return;
+  }
+  updateTeamCat(projectRoot, activeTeamId, catId, patch);
+}
+
+function deleteTeamOrRuntimeCat(projectRoot: string, catId: string): void {
+  const activeTeamId = getActiveTeamId();
+  if (activeTeamId === DEFAULT_TEAM_ID) {
+    deleteRuntimeCat(projectRoot, catId);
+    return;
+  }
+  deleteTeamCat(projectRoot, activeTeamId, catId);
+}
+
 function buildEffectiveAccountRefResolver() {
   return async (cat: CatConfig & { contextBudget?: ContextBudget }): Promise<string | undefined> =>
     resolveBoundAccountRefForCat('', cat.id, cat);
@@ -355,7 +395,7 @@ async function toCatResponse(
           evaluation: metadata.roster.evaluation,
         }
       : null,
-    source: (cat.source ?? 'runtime') as CatSource,
+    source: getActiveTeamId() === DEFAULT_TEAM_ID ? ((cat.source ?? 'runtime') as CatSource) : 'config',
     adapterMode: cat.clientId === 'google' ? (getAcpConfig(cat.id as string) ? 'acp' : 'cli') : undefined,
   };
 }
@@ -458,7 +498,7 @@ export const catsRoutes: FastifyPluginAsync = async (app) => {
       );
       const resolvedAvatar = body.avatar ?? '/avatars/default.png';
       if (body.clientId === 'antigravity') {
-        createRuntimeCat(projectRoot, {
+        createTeamOrRuntimeCat(projectRoot, {
           catId: body.catId,
           name: body.name,
           displayName: body.displayName,
@@ -485,7 +525,7 @@ export const catsRoutes: FastifyPluginAsync = async (app) => {
         });
       } else {
         const resolvedCli = buildResolvedCliConfig(body.clientId, defaultCliForClient(body.clientId), body.cli);
-        createRuntimeCat(projectRoot, {
+        createTeamOrRuntimeCat(projectRoot, {
           catId: body.catId,
           name: body.name,
           displayName: body.displayName,
@@ -643,7 +683,7 @@ export const catsRoutes: FastifyPluginAsync = async (app) => {
         hasCommandArgsPatch,
         nextCommandArgs,
       });
-      updateRuntimeCat(projectRoot, request.params.id, {
+      updateTeamOrRuntimeCat(projectRoot, request.params.id, {
         ...(body.name !== undefined ? { name: body.name } : {}),
         ...(body.displayName !== undefined ? { displayName: body.displayName } : {}),
         ...(body.nickname !== undefined ? { nickname: body.nickname } : {}),
@@ -715,7 +755,7 @@ export const catsRoutes: FastifyPluginAsync = async (app) => {
     try {
       await deleteRuntimeOverride(request.params.id);
       try {
-        deleteRuntimeCat(projectRoot, request.params.id);
+        deleteTeamOrRuntimeCat(projectRoot, request.params.id);
       } catch (err) {
         if (overrideBackup) {
           await setRuntimeOverride(request.params.id, overrideBackup);

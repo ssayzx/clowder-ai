@@ -55,8 +55,8 @@ export interface CatData {
   breedDisplayName?: string;
   /** F149: Adapter mode for Google provider cats (ACP vs legacy CLI) */
   adapterMode?: 'acp' | 'cli';
-  /** F127: Seed cats come from cat-template.json; runtime cats are added later */
-  source: 'seed' | 'runtime';
+  /** F127/F-team-config: seed cats come from catalog; runtime cats from runtime catalog; config cats from config/<team>. */
+  source: 'seed' | 'runtime' | 'config';
   /** F127: Roster metadata used by Hub ownership/lead markers */
   roster?: {
     family: string;
